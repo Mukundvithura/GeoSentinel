@@ -90,7 +90,7 @@ ADB Acquisition / Offline Forensic Dump
 
 ## Quick Start
 
-**Demo mode** (no device required — uses bundled forensic dataset):
+**Demo mode** (no device required — dynamically generates a synthetic dataset):
 ```bash
 python main.py --mode demo --output ./out
 ```
@@ -102,7 +102,7 @@ python main.py --mode live --output ./evidence
 
 **Offline forensic dump** (pre-acquired directory):
 ```bash
-python main.py --mode offline --input ./dump --output ./evidence
+python main.py --mode offline --dump-path ./dump --output ./evidence
 ```
 
 **Dashboard:**
@@ -115,29 +115,30 @@ python main.py --mode offline --input ./dump --output ./evidence
 ## Sample Output
 
 ```
-════════════════════════════════════════════════════════════
-  GeoSentinel  |  GPS Spoofing Forensic Detection Engine
-════════════════════════════════════════════════════════════
+======================================================================
+  LOCASHIELD FORENSIC EXAMINATION REPORT
+  Multi-Layer Forensic Correlation Engine
+======================================================================
+  Report Date     : 2026-04-29 09:31:24 UTC
+  Tool Version     : LocaShield v2.0.0
+  Evidence Root    : ./out
+  Risk Score       : 185/225
+  Confidence Level : CRITICAL
+======================================================================
 
-  [✔]  Mock Location Setting        FLAGGED   (15 pts)
-  [✔]  Spoofing App Installed        FLAGGED   (15 pts)
-  [✔]  Cell Tower Contradiction      FLAGGED   (25 pts)
-  [✔]  Logcat Mock Events            FLAGGED   (20 pts)
-  [✔]  App Behavioral Attribution    FLAGGED   (15 pts)
-  [✔]  EXIF Media Correlation        FLAGGED   (20 pts)
-  [✔]  Sensor Contradiction          FLAGGED   (40 pts)
-  [✔]  GNSS Signal Analysis          FLAGGED   (35 pts)
-  [ ]  Impossible Travel Speed       CLEAR
-  [ ]  Anti-Forensics Signals        CLEAR
-  [ ]  Root / Hooking Indicators     CLEAR
+SECTION A -- EXECUTIVE SUMMARY
+======================================================================
 
-  Risk Score : 185 / 225
-  Confidence : CRITICAL
+  Forensic examination of the acquired Android device artefacts identified
+  8 of 11 independent spoofing indicators (11 checks had data).
 
-  VERDICT: CONCLUSIVE EVIDENCE OF GPS SPOOFING
-           (8/11 indicators confirmed)
+  EVIDENCE SCORING MATRIX:
+    Risk Score       : 185 / 225
+    Confidence Level : CRITICAL
+    Checks Flagged   : 8
+    Data Available   : 11 / 11
 
-════════════════════════════════════════════════════════════
+  VERDICT: CRITICAL -- CONCLUSIVE EVIDENCE OF GPS SPOOFING (8/11 indicators, Risk Score: 185/225)
 ```
 
 ---
@@ -149,8 +150,8 @@ python main.py --mode offline --input ./dump --output ./evidence
 | `forensic_report.json` | JSON | Dashboard data + programmatic consumption |
 | `forensic_report.txt` | TXT | Court-appropriate narrative report |
 | `forensic_timeline.csv` | CSV | Importable into Excel, Autopsy, Cellebrite |
-| `INTEGRITY_MANIFEST.txt` | TXT | SHA-256 hashes for all acquired artifacts |
-| `CHAIN_OF_CUSTODY_HASHES.txt` | TXT | Acquisition-phase integrity log |
+| `INTEGRITY_MANIFEST.txt` | TXT | SHA-256 hashes for all generated forensic output files |
+| `acquisition/CHAIN_OF_CUSTODY_HASHES.txt` | TXT | Acquisition-phase integrity log |
 
 ---
 
@@ -177,9 +178,8 @@ GeoSentinel/
 ├── parsers.py                 # Artifact extraction (logcat, SQLite, XML, JSON)
 ├── report.py                  # Report generation (Console / JSON / CSV / TXT)
 ├── timeline.py                # Forensic timeline reconstruction
-├── adb_acquire.py             # Live ADB acquisition + demo data generator
-├── dashboard.html             # Interactive forensic dashboard (offline)
-└── sample_data/               # Bundled forensic dataset for demo mode
+├── adb_acquire.py             # Live ADB acquisition & demo generator
+└── dashboard.html             # Interactive forensic dashboard (offline)
 ```
 
 ---

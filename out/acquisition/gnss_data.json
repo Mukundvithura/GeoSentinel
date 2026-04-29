@@ -1,0 +1,94 @@
+{
+  "epochs": [
+    {
+      "ts_ms": 1710473500000,
+      "satellites": [
+        {
+          "svid": 2,
+          "constellation": "GPS",
+          "snr": 35.2
+        },
+        {
+          "svid": 5,
+          "constellation": "GPS",
+          "snr": 28.1
+        },
+        {
+          "svid": 12,
+          "constellation": "GPS",
+          "snr": 31.5
+        },
+        {
+          "svid": 25,
+          "constellation": "GPS",
+          "snr": 22.8
+        },
+        {
+          "svid": 1,
+          "constellation": "GLONASS",
+          "snr": 29.0
+        },
+        {
+          "svid": 8,
+          "constellation": "GALILEO",
+          "snr": 33.4
+        }
+      ]
+    },
+    {
+      "ts_ms": 1710475200000,
+      "satellites": [
+        {
+          "svid": 2,
+          "constellation": "GPS",
+          "snr": 40.0
+        },
+        {
+          "svid": 5,
+          "constellation": "GPS",
+          "snr": 40.1
+        },
+        {
+          "svid": 12,
+          "constellation": "GPS",
+          "snr": 39.9
+        },
+        {
+          "svid": 25,
+          "constellation": "GPS",
+          "snr": 40.0
+        },
+        {
+          "svid": 31,
+          "constellation": "GPS",
+          "snr": 40.2
+        }
+      ]
+    },
+    {
+      "ts_ms": 1710475260000,
+      "satellites": [
+        {
+          "svid": 2,
+          "constellation": "GPS",
+          "snr": 40.0
+        },
+        {
+          "svid": 5,
+          "constellation": "GPS",
+          "snr": 40.1
+        },
+        {
+          "svid": 12,
+          "constellation": "GPS",
+          "snr": 40.0
+        },
+        {
+          "svid": 25,
+          "constellation": "GPS",
+          "snr": 39.9
+        }
+      ]
+    }
+  ]
+}

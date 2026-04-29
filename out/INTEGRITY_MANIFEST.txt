@@ -1,28 +1,34 @@
 ======================================================================
   EVIDENCE INTEGRITY MANIFEST
-  GPS Spoofing Forensic Detection Tool v1.0.0
+  LocaShield v2.0.0
 ======================================================================
-  Generated    : 2026-04-28 10:01:05 UTC
+  Generated    : 2026-04-29 09:31:24 UTC
   Output Dir   : ./out
-  Verdict      : HIGH RISK — 4 indicators, Risk Score: 50%
-  Files Hashed : 14
+  Verdict      : CRITICAL -- CONCLUSIVE EVIDENCE OF GPS SPOOFING (8/11 indicators, Risk Score: 185/225)
+  Files Hashed : 20
 ======================================================================
 
 SHA-256 Hash                                                        File
 ────────────────────────────────────────────────────────────────  ────────────────────────────────────────
-630c7dd6f494b531439a7cbe093bd3ee75974b5c2ee9cfaf9d766ff9036ea576  acquisition\CHAIN_OF_CUSTODY_HASHES.txt
-e2c825193fc759fdf92fc9ece5f886c7826dde9661cfb89cdf406b72abe13095  acquisition\data\data\com.google.android.apps.maps\databases\da_destination_history.db
-d46788d5ac50a323203a2c481fec3a68be0db4b4e877c95abd82d0af2771ae53  acquisition\data\data\com.google.android.gms\databases\herrevad.db
-a932175a13818ea179c7a57829e6d51079f76a4ea9c670c4f57f26ed2862a0c4  acquisition\data\data\com.google.android.gms\databases\location_cache.db
-c664f28cbb422dbe8c8acb733a716837ac132231c6f2901eec58aaae3bc81442  acquisition\data\data\com.google.android.gms\databases\netconn.db
+221d0973b55e57897d45d11b2c462d64da391d2e7687bb59ea3e1336820ef831  acquisition\CHAIN_OF_CUSTODY_HASHES.txt
+ea7e59188d23420a77ad1695b3db99ef6e8a4db399cfd8212d2e9c252a4a824a  acquisition\activity_data.json
+1d5b89526252d89cfe54fd0bfcff0cc20fbc6850ccefa3bb89e0d0072f7bba47  acquisition\data\data\com.google.android.apps.maps\databases\da_destination_history.db
+b492daba360885c0480e643709a1aca78175a469766ffc3c5fe44f096f1debe8  acquisition\data\data\com.google.android.gms\databases\herrevad.db
+ac739818131da274fde23c33076d95b64822fb27094925483feb62e56cd4b222  acquisition\data\data\com.google.android.gms\databases\location_cache.db
+d1ba352c46cdf5b73aa7d63e42134b352ea86d12d31926ba96c0ab61ae1be3ba  acquisition\data\data\com.google.android.gms\databases\netconn.db
 f62cd683cb1862fc11667b7d2d5986c5c5bbaf93dba340996bf17b75245ad56f  acquisition\data\system\users\0\settings_global.xml
 fe5fbfc220768fa942c4273bf6f838a58adad0d73b69bde85c246cd458ec3130  acquisition\data\system\users\0\settings_secure.xml
 732549dd637519212be14bce4590ddb2f810adaa672766f6723e0b5d6736ebf6  acquisition\dumpsys_location.txt
+2432837730e996cea9cf83757036e10a5da2c5ad50681834b78c0d6602c931fa  acquisition\exif_data.json
+0711d74c324f53d4b9971f6e411e4e56f422546ba1aa5961e109283dc69eac95  acquisition\gnss_data.json
 50f65e46448e85cb45a4e23f97a1e0aaaf58d7457fbdf7345471c181844b122f  acquisition\logcat_dump.txt
 978fa485b915283811bc15bed241b871b54ba1011e927711060f40184b574242  acquisition\package_list.txt
-f1c08375b9f94855c6754a6a5eccd7a33c465f44798ac68bf3a64e7c21003816  forensic_report.json
-f85f859649b236a9885033a3423cc12adc81dbd7d7efc935c7fb5a52f8bd6c5f  forensic_report.txt
-341468426023bdaa3a548a08dd4a004a2a511c73f3bc4500fa2530b0d185f189  forensic_timeline.csv
+25a0cea3fab2ca1d95b3d5160272f2b1839ad7b9bc8e136154b225b362c6a846  acquisition\sensor_data.json
+845a220d4caa0586cea5a947434769d7d52662483c6c8979c8e985cfe05cabf0  acquisition\step_data.json
+a504d1aa7347f311832d4e9255624390aabf5d1b5e4c7e493791af053a9f748a  acquisition\usage_stats.json
+5fdebc82632ae50cb62296f7a1067853a395b4bfe4717024089f541feef3f8f0  forensic_report.json
+e24aff27e1bde632ee45589249cc781e5a190777d82ae84d41d5623ade6c6ec9  forensic_report.txt
+91490dcfb189e5cc510da29d595f640b45345f5aae1641d85924e959b4590f0a  forensic_timeline.csv
 bb306ce19cd182f0aa788fcc63b92d2cd977a2ad30d0e4baa72a0c4078ffee48  forensics_report.json
 
 ======================================================================
