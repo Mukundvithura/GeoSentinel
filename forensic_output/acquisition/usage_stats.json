@@ -1,0 +1,17 @@
+[
+  {
+    "package": "com.lexa.fakegps",
+    "event": "FOREGROUND",
+    "ts_ms": 1710475180000
+  },
+  {
+    "package": "com.lexa.fakegps",
+    "event": "FOREGROUND",
+    "ts_ms": 1710475220000
+  },
+  {
+    "package": "com.lexa.fakegps",
+    "event": "BACKGROUND",
+    "ts_ms": 1710476000000
+  }
+]

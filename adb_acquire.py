@@ -242,7 +242,7 @@ class ADBClient:
         """Write all SHA-256 hashes to a hash manifest file."""
         log_path = os.path.join(self.output_dir, "CHAIN_OF_CUSTODY_HASHES.txt")
         with open(log_path, "w") as f:
-            f.write("GPS SPOOFING FORENSIC TOOL — CHAIN OF CUSTODY HASH LOG\n")
+            f.write("LOCASHIELD -- CHAIN OF CUSTODY HASH LOG\n")
             f.write(f"Generated: {datetime.datetime.utcnow().isoformat()} UTC\n")
             f.write("=" * 70 + "\n")
             for filepath, sha256 in self.hash_log.items():
@@ -524,5 +524,119 @@ class ADBClient:
         with open(os.path.join(root, "dumpsys_location.txt"), "w") as f:
             f.write(dumpsys_content)
 
+        # ── NEW PHASE 3–6: Synthetic data for advanced checks ─────────────
+
+        import json
+
+        # ── exif_data.json (Phase 4: EXIF Media Correlation) ──────────────
+        # Photos taken in Chennai during spoofing window (contradicts GPS)
+        exif_data = [
+            {
+                "lat": 13.0825, "lng": 80.2705,
+                "ts_ms": (base_ts + 1810) * 1000,
+                "source": "DCIM/IMG_20240315_093010.jpg"
+            },
+            {
+                "lat": 13.0830, "lng": 80.2710,
+                "ts_ms": (base_ts + 1870) * 1000,
+                "source": "WhatsApp/IMG-20240315-WA0012.jpg"
+            },
+        ]
+        with open(os.path.join(root, "exif_data.json"), "w") as f:
+            json.dump(exif_data, f, indent=2)
+
+        # ── sensor_data.json (Phase 5: Sensor Contradiction) ──────────────
+        # Accelerometer shows stationary (~9.81 m/s²) during GPS "travel"
+        sensor_data = {"readings": []}
+        for offset in range(1780, 1940, 10):
+            sensor_data["readings"].append({
+                "ts_ms": (base_ts + offset) * 1000,
+                "magnitude": 9.81 + (0.01 * (offset % 3)),  # near-zero variance
+            })
+        with open(os.path.join(root, "sensor_data.json"), "w") as f:
+            json.dump(sensor_data, f, indent=2)
+
+        # ── activity_data.json (Phase 5: Activity Recognition) ────────────
+        # Activity Recognition says STILL during GPS travel window
+        activity_data = [
+            {"ts_ms": (base_ts + 1790) * 1000, "activity": "STILL"},
+            {"ts_ms": (base_ts + 1820) * 1000, "activity": "STILL"},
+            {"ts_ms": (base_ts + 1850) * 1000, "activity": "TILTING"},
+            {"ts_ms": (base_ts + 1880) * 1000, "activity": "STILL"},
+            {"ts_ms": (base_ts + 1910) * 1000, "activity": "STILL"},
+        ]
+        with open(os.path.join(root, "activity_data.json"), "w") as f:
+            json.dump(activity_data, f, indent=2)
+
+        # ── step_data.json (Phase 5: Step Counter) ────────────────────────
+        # Zero steps during the GPS "347 km travel" window
+        step_data = [
+            {"ts_ms": (base_ts + 0)    * 1000, "steps": 1204},
+            {"ts_ms": (base_ts + 1800) * 1000, "steps": 1204},  # no change!
+            {"ts_ms": (base_ts + 3700) * 1000, "steps": 1247},
+        ]
+        with open(os.path.join(root, "step_data.json"), "w") as f:
+            json.dump(step_data, f, indent=2)
+
+        # ── gnss_data.json (Phase 6: GNSS Signal Analysis) ───────────────
+        # During spoofing window: suspicious uniform SNR, single constellation
+        gnss_data = {"epochs": [
+            {
+                "ts_ms": (base_ts + 100) * 1000,
+                "satellites": [
+                    {"svid": 2,  "constellation": "GPS",     "snr": 35.2},
+                    {"svid": 5,  "constellation": "GPS",     "snr": 28.1},
+                    {"svid": 12, "constellation": "GPS",     "snr": 31.5},
+                    {"svid": 25, "constellation": "GPS",     "snr": 22.8},
+                    {"svid": 1,  "constellation": "GLONASS", "snr": 29.0},
+                    {"svid": 8,  "constellation": "GALILEO", "snr": 33.4},
+                ]
+            },
+            {
+                "ts_ms": (base_ts + 1800) * 1000,  # spoofing start
+                "satellites": [
+                    {"svid": 2,  "constellation": "GPS", "snr": 40.0},
+                    {"svid": 5,  "constellation": "GPS", "snr": 40.1},
+                    {"svid": 12, "constellation": "GPS", "snr": 39.9},
+                    {"svid": 25, "constellation": "GPS", "snr": 40.0},
+                    {"svid": 31, "constellation": "GPS", "snr": 40.2},
+                ]
+            },
+            {
+                "ts_ms": (base_ts + 1860) * 1000,
+                "satellites": [
+                    {"svid": 2,  "constellation": "GPS", "snr": 40.0},
+                    {"svid": 5,  "constellation": "GPS", "snr": 40.1},
+                    {"svid": 12, "constellation": "GPS", "snr": 40.0},
+                    {"svid": 25, "constellation": "GPS", "snr": 39.9},
+                ]
+            },
+        ]}
+        with open(os.path.join(root, "gnss_data.json"), "w") as f:
+            json.dump(gnss_data, f, indent=2)
+
+        # ── usage_stats.json (Phase 3: Behavioral Attribution) ────────────
+        # Spoofing app foreground during spoofing window
+        usage_stats = [
+            {
+                "package": "com.lexa.fakegps",
+                "event": "FOREGROUND",
+                "ts_ms": (base_ts + 1780) * 1000
+            },
+            {
+                "package": "com.lexa.fakegps",
+                "event": "FOREGROUND",
+                "ts_ms": (base_ts + 1820) * 1000
+            },
+            {
+                "package": "com.lexa.fakegps",
+                "event": "BACKGROUND",
+                "ts_ms": (base_ts + 2600) * 1000
+            },
+        ]
+        with open(os.path.join(root, "usage_stats.json"), "w") as f:
+            json.dump(usage_stats, f, indent=2)
+
         # ── Write hash log for demo artefacts ─────────────────────────────
         self._write_hash_log()
+

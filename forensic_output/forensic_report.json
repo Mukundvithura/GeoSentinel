@@ -1,0 +1,480 @@
+{
+  "meta": {
+    "tool": "LocaShield v2.0.0",
+    "generated_at": "2026-04-29 06:25:27 UTC",
+    "output_dir": "./forensic_output"
+  },
+  "summary": {
+    "indicators_confirmed": 8,
+    "total_indicators": 11,
+    "suspicious_event_count": 6,
+    "risk_score": 185,
+    "max_score": 225,
+    "confidence": "critical",
+    "verdict": "CRITICAL -- CONCLUSIVE EVIDENCE OF GPS SPOOFING (8/11 indicators, Risk Score: 185/225)"
+  },
+  "indicators": [
+    {
+      "name": "Mock Location Setting",
+      "flagged": true,
+      "weight": 15,
+      "confidence": "high",
+      "available": true,
+      "summary": "FLAGGED \u2014 Mock location app 'com.lexa.fakegps' was active.",
+      "evidence": [
+        "Developer Options were enabled on this device.",
+        "Developer Options enablement timestamp: 2024-03-15 03:52:00 UTC",
+        "Mock Location App designated: 'com.lexa.fakegps'",
+        "Mock location setting modification timestamp: 2024-03-15 03:59:00 UTC"
+      ]
+    },
+    {
+      "name": "Spoofing App Installed",
+      "flagged": true,
+      "weight": 15,
+      "confidence": "medium",
+      "available": true,
+      "summary": "FLAGGED \u2014 1 known spoofing application(s) found: com.lexa.fakegps",
+      "evidence": [
+        "Package: com.lexa.fakegps  |  Name: Fake GPS Location by Lexa  |  Installed: 2024-03-15 03:56:00 UTC"
+      ]
+    },
+    {
+      "name": "Impossible Travel Speed",
+      "flagged": false,
+      "weight": 0,
+      "confidence": "none",
+      "available": true,
+      "summary": "No impossible travel detected. All GPS transitions within 900 km/h threshold.",
+      "evidence": []
+    },
+    {
+      "name": "Cell Tower Contradiction",
+      "flagged": true,
+      "weight": 25,
+      "confidence": "high",
+      "available": true,
+      "summary": "FLAGGED \u2014 10 GPS/cell tower geographic contradictions detected. Device GPS reports locations inconsistent with simultaneously active cell towers.",
+      "evidence": [
+        "CONTRADICTION at 2024-03-15 04:00:00 UTC: GPS reports (12.9716,77.5946)  |  Cell tower CID=28741 resolves to 'Chennai' (13.0827,80.2707)  |  Separation: 290.2 km  |  Time gap between records: 0.0 s",
+        "CONTRADICTION at 2024-03-15 04:00:00 UTC: GPS reports (12.9716,77.5946)  |  Cell tower CID=28741 resolves to 'Chennai' (13.0827,80.2707)  |  Separation: 290.2 km  |  Time gap between records: 0.0 s",
+        "CONTRADICTION at 2024-03-15 04:00:30 UTC: GPS reports (12.9720,77.5950)  |  Cell tower CID=28741 resolves to 'Chennai' (13.0827,80.2707)  |  Separation: 290.1 km  |  Time gap between records: 30.0 s",
+        "CONTRADICTION at 2024-03-15 04:00:30 UTC: GPS reports (12.9720,77.5950)  |  Cell tower CID=28741 resolves to 'Chennai' (13.0827,80.2707)  |  Separation: 290.1 km  |  Time gap between records: 30.0 s",
+        "CONTRADICTION at 2024-03-15 04:01:00 UTC: GPS reports (12.9718,77.5948)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 0.0 s",
+        "CONTRADICTION at 2024-03-15 04:01:00 UTC: GPS reports (12.9718,77.5948)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 0.0 s",
+        "CONTRADICTION at 2024-03-15 04:01:30 UTC: GPS reports (12.9715,77.5944)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 30.0 s",
+        "CONTRADICTION at 2024-03-15 04:01:30 UTC: GPS reports (12.9715,77.5944)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 30.0 s",
+        "CONTRADICTION at 2024-03-15 04:02:00 UTC: GPS reports (12.9722,77.5952)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 60.0 s",
+        "CONTRADICTION at 2024-03-15 04:02:00 UTC: GPS reports (12.9722,77.5952)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 60.0 s"
+      ]
+    },
+    {
+      "name": "Logcat Mock Events",
+      "flagged": true,
+      "weight": 20,
+      "confidence": "high",
+      "available": true,
+      "summary": "FLAGGED \u2014 3 mock location provider event(s) found in logcat. System-level evidence of active GPS spoofing.",
+      "evidence": [
+        "[03-15 09:29:00.123] 03-15 09:29:00.123  1234  5678 I MockLocationProvider: setTestProviderLocation: provider=gps lat=12.9716 lng=77.5946",
+        "[03-15 09:30:00.456] 03-15 09:30:00.456  1234  5678 D LocationManagerService: Mock provider enabled for gps by com.lexa.fakegps",
+        "[03-15 09:44:02.789] 03-15 09:44:02.789  1234  5678 D LocationManagerService: Mock provider disabled for gps"
+      ]
+    },
+    {
+      "name": "Anti-Forensics Signals",
+      "flagged": false,
+      "weight": 0,
+      "confidence": "none",
+      "available": true,
+      "summary": "No anti-forensic signals detected in location data.",
+      "evidence": [
+        "12 duplicate record(s) found.",
+        "  -> Duplicate GPS record at index 1: (13.0820, 80.2700) ts=1710473400000",
+        "  -> Duplicate GPS record at index 3: (13.0822, 80.2703) ts=1710473430000"
+      ]
+    },
+    {
+      "name": "Root / Hooking Indicators",
+      "flagged": false,
+      "weight": 0,
+      "confidence": "none",
+      "available": true,
+      "summary": "No root or hooking framework indicators detected.",
+      "evidence": []
+    },
+    {
+      "name": "App Behavioral Attribution",
+      "flagged": true,
+      "weight": 15,
+      "confidence": "high",
+      "available": true,
+      "summary": "FLAGGED \u2014 3 behavioral attribution indicator(s) found. Spoofing app activity correlates with detected GPS anomalies.",
+      "evidence": [
+        "Spoofing app foreground activity: com.lexa.fakegps was in foreground at 2024-03-15 03:59:40 UTC",
+        "Spoofing app foreground activity: com.lexa.fakegps was in foreground at 2024-03-15 04:00:20 UTC",
+        "Behavioral pattern: 'com.lexa.fakegps' installed within 180s of mock location setting activation \u2014 strong install-then-spoof correlation."
+      ]
+    },
+    {
+      "name": "EXIF Media Correlation",
+      "flagged": true,
+      "weight": 20,
+      "confidence": "high",
+      "available": true,
+      "summary": "FLAGGED \u2014 2 EXIF/GPS mismatch(es) detected. Photo metadata contradicts reported device location.",
+      "evidence": [
+        "EXIF MISMATCH at 2024-03-15 04:00:10 UTC: Photo GPS (13.0825,80.2705) vs Device GPS (12.9716,77.5946)  |  Separation: 290.1 km  |  Source: DCIM/IMG_20240315_093010.jpg  |  Time gap: 10s",
+        "EXIF MISMATCH at 2024-03-15 04:01:10 UTC: Photo GPS (13.0830,80.2710) vs Device GPS (12.9718,77.5948)  |  Separation: 290.2 km  |  Source: WhatsApp/IMG-20240315-WA0012.jpg  |  Time gap: 10s"
+      ]
+    },
+    {
+      "name": "Sensor Contradiction",
+      "flagged": true,
+      "weight": 40,
+      "confidence": "high",
+      "available": true,
+      "summary": "FLAGGED \u2014 4 sensor/GPS contradiction(s) detected. Physical sensor data contradicts reported GPS movement.",
+      "evidence": [
+        "SENSOR CONTRADICTION at 2024-03-15 03:59:50 UTC: GPS implies 622 km/h travel, but Activity Recognition reports 'STILL'. Device was physically stationary while GPS moved 290.2 km.",
+        "STEP COUNTER CONTRADICTION: GPS shows 580.7 km travel, but step counter recorded only 43 steps (~0.0 km). Device was physically stationary.",
+        "ACCELEROMETER CONTRADICTION at 2024-03-15 03:32:00 UTC: GPS implies 622 km/h, but accelerometer shows stationary (variance=0.000, mean=9.82 m/s\u00b2). Phone was sitting still while GPS 'moved' 290.2 km.",
+        "ACCELEROMETER CONTRADICTION at 2024-03-15 04:02:00 UTC: GPS implies 587 km/h, but accelerometer shows stationary (variance=0.000, mean=9.82 m/s\u00b2). Phone was sitting still while GPS 'moved' 290.1 km."
+      ]
+    },
+    {
+      "name": "GNSS Signal Analysis",
+      "flagged": true,
+      "weight": 35,
+      "confidence": "high",
+      "available": true,
+      "summary": "FLAGGED \u2014 3 GNSS signal anomaly(ies) detected. Satellite metadata suggests possible hardware-level GNSS simulation.",
+      "evidence": [
+        "SNR UNIFORMITY ANOMALY at 2024-03-15 04:00:00 UTC: 5 satellites with near-identical SNR (variance=0.01 dB-Hz, mean=40.0 dB-Hz). Real GNSS signals exhibit significant SNR variation.",
+        "SNR UNIFORMITY ANOMALY at 2024-03-15 04:01:00 UTC: 4 satellites with near-identical SNR (variance=0.01 dB-Hz, mean=40.0 dB-Hz). Real GNSS signals exhibit significant SNR variation.",
+        "INVALID SATELLITE IDs: 1 satellite(s) with out-of-range SVIDs detected: [1]. Suggests fabricated constellation data."
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "ts_utc": "2024-03-15 03:30:00 UTC",
+      "ts_ms": 1710473400000,
+      "source": "herrevad.db",
+      "event_type": "GPS_LOCATION",
+      "description": "GPS fix: (13.0820, 80.2700)  Provider=gps  Accuracy=15.0m",
+      "suspicious": false,
+      "lat": 13.082,
+      "lng": 80.27
+    },
+    {
+      "ts_utc": "2024-03-15 03:30:00 UTC",
+      "ts_ms": 1710473400000,
+      "source": "netconn.db",
+      "event_type": "CELL_TOWER_SCAN",
+      "description": "Cell tower: MCC=404  MNC=20  LAC=8001  CID=28741  Signal=-75 dBm",
+      "suspicious": false,
+      "lat": null,
+      "lng": null
+    },
+    {
+      "ts_utc": "2024-03-15 03:30:30 UTC",
+      "ts_ms": 1710473430000,
+      "source": "herrevad.db",
+      "event_type": "GPS_LOCATION",
+      "description": "GPS fix: (13.0822, 80.2703)  Provider=gps  Accuracy=12.0m",
+      "suspicious": false,
+      "lat": 13.0822,
+      "lng": 80.2703
+    },
+    {
+      "ts_utc": "2024-03-15 03:30:50 UTC",
+      "ts_ms": 1710473450000,
+      "source": "da_destination_history.db",
+      "event_type": "MAPS_DESTINATION",
+      "description": "Google Maps navigation to: 'Anna Salai, Chennai, Tamil Nadu'  (13.0827, 80.2707)",
+      "suspicious": false,
+      "lat": 13.0827,
+      "lng": 80.2707
+    },
+    {
+      "ts_utc": "2024-03-15 03:31:00 UTC",
+      "ts_ms": 1710473460000,
+      "source": "herrevad.db",
+      "event_type": "GPS_LOCATION",
+      "description": "GPS fix: (13.0825, 80.2705)  Provider=gps  Accuracy=10.0m",
+      "suspicious": false,
+      "lat": 13.0825,
+      "lng": 80.2705
+    },
+    {
+      "ts_utc": "2024-03-15 03:31:30 UTC",
+      "ts_ms": 1710473490000,
+      "source": "herrevad.db",
+      "event_type": "GPS_LOCATION",
+      "description": "GPS fix: (13.0827, 80.2707)  Provider=gps  Accuracy=8.0m",
+      "suspicious": false,
+      "lat": 13.0827,
+      "lng": 80.2707
+    },
+    {
+      "ts_utc": "2024-03-15 03:32:00 UTC",
+      "ts_ms": 1710473520000,
+      "source": "herrevad.db",
+      "event_type": "GPS_LOCATION",
+      "description": "GPS fix: (13.0829, 80.2709)  Provider=network  Accuracy=9.0m",
+      "suspicious": false,
+      "lat": 13.0829,
+      "lng": 80.2709
+    },
+    {
+      "ts_utc": "2024-03-15 03:40:00 UTC",
+      "ts_ms": 1710474000000,
+      "source": "netconn.db",
+      "event_type": "CELL_TOWER_SCAN",
+      "description": "Cell tower: MCC=404  MNC=20  LAC=8001  CID=28742  Signal=-78 dBm",
+      "suspicious": false,
+      "lat": null,
+      "lng": null
+    },
+    {
+      "ts_utc": "2024-03-15 03:52:00 UTC",
+      "ts_ms": 1710474720000,
+      "source": "settings_global.xml",
+      "event_type": "DEVELOPER_OPTIONS_ENABLED",
+      "description": "Developer Options were enabled on this device.",
+      "suspicious": true,
+      "lat": null,
+      "lng": null
+    },
+    {
+      "ts_utc": "2024-03-15 03:56:00 UTC",
+      "ts_ms": 1710474960000,
+      "source": "package_list.txt",
+      "event_type": "SPOOFING_APP_INSTALLED",
+      "description": "GPS spoofing application installed: Fake GPS Location by Lexa (com.lexa.fakegps)",
+      "suspicious": true,
+      "lat": null,
+      "lng": null
+    },
+    {
+      "ts_utc": "2024-03-15 03:59:00 UTC",
+      "ts_ms": 1710475140000,
+      "source": "settings_secure.xml",
+      "event_type": "MOCK_LOCATION_SET",
+      "description": "Mock Location App designated: 'com.lexa.fakegps'",
+      "suspicious": true,
+      "lat": null,
+      "lng": null
+    },
+    {
+      "ts_utc": "2024-03-15 03:59:10 UTC",
+      "ts_ms": 1710475150000,
+      "source": "da_destination_history.db",
+      "event_type": "MAPS_DESTINATION",
+      "description": "Google Maps navigation to: 'MG Road, Bengaluru, Karnataka'  (12.9716, 77.5946)",
+      "suspicious": false,
+      "lat": 12.9716,
+      "lng": 77.5946
+    },
+    {
+      "ts_utc": "2024-03-15 04:00:00 UTC",
+      "ts_ms": 1710475200000,
+      "source": "herrevad.db",
+      "event_type": "GPS_LOCATION",
+      "description": "GPS fix: (12.9716, 77.5946)  Provider=gps  Accuracy=5.0m",
+      "suspicious": false,
+      "lat": 12.9716,
+      "lng": 77.5946
+    },
+    {
+      "ts_utc": "2024-03-15 04:00:00 UTC",
+      "ts_ms": 1710475200000,
+      "source": "netconn.db",
+      "event_type": "CELL_TOWER_SCAN",
+      "description": "Cell tower: MCC=404  MNC=20  LAC=8001  CID=28741  Signal=-72 dBm",
+      "suspicious": false,
+      "lat": null,
+      "lng": null
+    },
+    {
+      "ts_utc": "2024-03-15 04:00:30 UTC",
+      "ts_ms": 1710475230000,
+      "source": "herrevad.db",
+      "event_type": "GPS_LOCATION",
+      "description": "GPS fix: (12.9720, 77.5950)  Provider=gps  Accuracy=4.0m",
+      "suspicious": false,
+      "lat": 12.972,
+      "lng": 77.595
+    },
+    {
+      "ts_utc": "2024-03-15 04:01:00 UTC",
+      "ts_ms": 1710475260000,
+      "source": "herrevad.db",
+      "event_type": "GPS_LOCATION",
+      "description": "GPS fix: (12.9718, 77.5948)  Provider=gps  Accuracy=6.0m",
+      "suspicious": false,
+      "lat": 12.9718,
+      "lng": 77.5948
+    },
+    {
+      "ts_utc": "2024-03-15 04:01:00 UTC",
+      "ts_ms": 1710475260000,
+      "source": "netconn.db",
+      "event_type": "CELL_TOWER_SCAN",
+      "description": "Cell tower: MCC=404  MNC=20  LAC=8001  CID=28743  Signal=-80 dBm",
+      "suspicious": false,
+      "lat": null,
+      "lng": null
+    },
+    {
+      "ts_utc": "2024-03-15 04:01:30 UTC",
+      "ts_ms": 1710475290000,
+      "source": "herrevad.db",
+      "event_type": "GPS_LOCATION",
+      "description": "GPS fix: (12.9715, 77.5944)  Provider=gps  Accuracy=5.5m",
+      "suspicious": false,
+      "lat": 12.9715,
+      "lng": 77.5944
+    },
+    {
+      "ts_utc": "2024-03-15 04:02:00 UTC",
+      "ts_ms": 1710475320000,
+      "source": "herrevad.db",
+      "event_type": "GPS_LOCATION",
+      "description": "GPS fix: (12.9722, 77.5952)  Provider=gps  Accuracy=4.0m",
+      "suspicious": false,
+      "lat": 12.9722,
+      "lng": 77.5952
+    },
+    {
+      "ts_utc": "2024-03-15 04:10:00 UTC",
+      "ts_ms": 1710475800000,
+      "source": "netconn.db",
+      "event_type": "CELL_TOWER_SCAN",
+      "description": "Cell tower: MCC=404  MNC=20  LAC=8001  CID=28741  Signal=-76 dBm",
+      "suspicious": false,
+      "lat": null,
+      "lng": null
+    },
+    {
+      "ts_utc": "2024-03-15 04:30:00 UTC",
+      "ts_ms": 1710477000000,
+      "source": "netconn.db",
+      "event_type": "CELL_TOWER_SCAN",
+      "description": "Cell tower: MCC=404  MNC=20  LAC=8001  CID=28742  Signal=-74 dBm",
+      "suspicious": false,
+      "lat": null,
+      "lng": null
+    },
+    {
+      "ts_utc": "2024-03-15 04:31:40 UTC",
+      "ts_ms": 1710477100000,
+      "source": "herrevad.db",
+      "event_type": "GPS_LOCATION",
+      "description": "GPS fix: (13.0828, 80.2706)  Provider=gps  Accuracy=11.0m",
+      "suspicious": false,
+      "lat": 13.0828,
+      "lng": 80.2706
+    },
+    {
+      "ts_utc": "2024-03-15 04:32:10 UTC",
+      "ts_ms": 1710477130000,
+      "source": "herrevad.db",
+      "event_type": "GPS_LOCATION",
+      "description": "GPS fix: (13.0830, 80.2708)  Provider=network  Accuracy=10.0m",
+      "suspicious": false,
+      "lat": 13.083,
+      "lng": 80.2708
+    },
+    {
+      "ts_utc": "2026-03-15 03:59:00 UTC",
+      "ts_ms": 1773547140123,
+      "source": "logcat_dump.txt",
+      "event_type": "MOCK_LOCATION_LOGCAT",
+      "description": "Logcat: 03-15 09:29:00.123  1234  5678 I MockLocationProvider: setTestProviderLocation: provider=gps lat=12.9716 lng=77.5946",
+      "suspicious": true,
+      "lat": null,
+      "lng": null
+    },
+    {
+      "ts_utc": "2026-03-15 04:00:00 UTC",
+      "ts_ms": 1773547200456,
+      "source": "logcat_dump.txt",
+      "event_type": "MOCK_LOCATION_LOGCAT",
+      "description": "Logcat: 03-15 09:30:00.456  1234  5678 D LocationManagerService: Mock provider enabled for gps by com.lexa.fakegps",
+      "suspicious": true,
+      "lat": null,
+      "lng": null
+    },
+    {
+      "ts_utc": "2026-03-15 04:14:02 UTC",
+      "ts_ms": 1773548042789,
+      "source": "logcat_dump.txt",
+      "event_type": "MOCK_LOCATION_LOGCAT",
+      "description": "Logcat: 03-15 09:44:02.789  1234  5678 D LocationManagerService: Mock provider disabled for gps",
+      "suspicious": true,
+      "lat": null,
+      "lng": null
+    }
+  ],
+  "spoofing_apps": [
+    {
+      "package": "com.lexa.fakegps",
+      "name": "Fake GPS Location by Lexa",
+      "installed_at": ""
+    }
+  ],
+  "cell_contradictions": [
+    {
+      "ts_utc": "2024-03-15 04:00:00 UTC",
+      "gps_lat": 12.9716,
+      "gps_lng": 77.5946,
+      "cid": 28741,
+      "cell_city": "Chennai",
+      "cell_lat": 13.0827,
+      "cell_lng": 80.2707,
+      "separation_km": 290.2
+    },
+    {
+      "ts_utc": "2024-03-15 04:00:30 UTC",
+      "gps_lat": 12.972,
+      "gps_lng": 77.595,
+      "cid": 28741,
+      "cell_city": "Chennai",
+      "cell_lat": 13.0827,
+      "cell_lng": 80.2707,
+      "separation_km": 290.1
+    },
+    {
+      "ts_utc": "2024-03-15 04:01:00 UTC",
+      "gps_lat": 12.9718,
+      "gps_lng": 77.5948,
+      "cid": 28743,
+      "cell_city": "Chennai",
+      "cell_lat": 13.075,
+      "cell_lng": 80.265,
+      "separation_km": 289.5
+    },
+    {
+      "ts_utc": "2024-03-15 04:01:30 UTC",
+      "gps_lat": 12.9715,
+      "gps_lng": 77.5944,
+      "cid": 28743,
+      "cell_city": "Chennai",
+      "cell_lat": 13.075,
+      "cell_lng": 80.265,
+      "separation_km": 289.5
+    },
+    {
+      "ts_utc": "2024-03-15 04:02:00 UTC",
+      "gps_lat": 12.9722,
+      "gps_lng": 77.5952,
+      "cid": 28743,
+      "cell_city": "Chennai",
+      "cell_lat": 13.075,
+      "cell_lng": 80.265,
+      "separation_km": 289.5
+    }
+  ]
+}

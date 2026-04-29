@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 =============================================================================
-GPS Spoofing Forensic Detection Tool
+LocaShield -- Multi-Layer Forensic Correlation Engine
 Project: Forensic Detection and Timeline Reconstruction of GPS Spoofing
          on Android Devices
 Author : Cybersecurity / Digital Forensics Academic Project
@@ -42,9 +42,9 @@ from report       import ReportGenerator
 def build_arg_parser() -> argparse.ArgumentParser:
     """Define and return the command-line argument parser."""
     parser = argparse.ArgumentParser(
-        prog="gps_spoof_detector",
+        prog="locashield",
         description=(
-            "GPS Spoofing Forensic Detection Tool — "
+            "LocaShield -- "
             "Detects and reconstructs GPS spoofing artefacts on Android devices."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -119,8 +119,8 @@ def main():
 
     # ── Banner ────────────────────────────────────────────────────────────────
     print("=" * 70)
-    print("  GPS SPOOFING FORENSIC DETECTION TOOL  v1.0.0")
-    print("  Academic Cyber Forensics Project")
+    print("  LOCASHIELD  v2.0.0")
+    print("  Multi-Layer Forensic Correlation Engine")
     print("=" * 70)
     print(f"  Mode         : {args.mode.upper()}")
     print(f"  Output Dir   : {args.output}")
@@ -178,9 +178,10 @@ def main():
 
     print(f"  [OK] Mock Location Setting   : {parsed_data.get('mock_location_enabled', 'N/A')}")
     print(f"  [OK] Spoofing Apps Found     : {len(parsed_data.get('spoofing_apps', []))}")
+    print(f"  [OK] Root/Hook Indicators    : {len(parsed_data.get('root_indicators', []))}")
     print(f"  [OK] GPS Location Records    : {len(parsed_data.get('gps_records', []))}")
     print(f"  [OK] Cell Tower Records      : {len(parsed_data.get('cell_records', []))}")
-    print(f"  [OK] WiFi Scan Records       : {len(parsed_data.get('wifi_records', []))}")
+    print(f"  [OK] Data Inconsistencies    : {len(parsed_data.get('data_inconsistencies', []))}")
     print(f"  [OK] App Usage Events        : {len(parsed_data.get('app_usage', []))}")
 
     # ── STEP 3: Spoofing Detection ────────────────────────────────────────────
@@ -195,8 +196,14 @@ def main():
     detection_results = detector.run_all_checks()
 
     for check_name, result in detection_results.items():
-        status = "⚠ FLAGGED" if result["flagged"] else "✓ CLEAR"
-        print(f"  [{status}] {check_name}: {result['summary']}")
+        if not result.get('available', True):
+            status = "-- N/A"
+        elif result["flagged"]:
+            status = "!! FLAGGED"
+        else:
+            status = "OK CLEAR"
+        conf = result.get('confidence', 'none')
+        print(f"  [{status}] {check_name}: {result['summary']} (confidence: {conf})")
 
     # ── STEP 4: Timeline Reconstruction ──────────────────────────────────────
     print("\n[STEP 4/5] TIMELINE RECONSTRUCTION")
@@ -228,15 +235,21 @@ def main():
     json_path = reporter.generate_json_report()
     csv_path  = reporter.generate_csv_timeline()
     txt_path  = reporter.generate_text_report()
+    manifest  = reporter.generate_integrity_manifest()
 
     print(f"  [OK] JSON report saved       : {json_path}")
     print(f"  [OK] CSV timeline saved      : {csv_path}")
     print(f"  [OK] Text report saved       : {txt_path}")
+    print(f"  [OK] Integrity manifest      : {manifest}")
 
     # ── Final Verdict ─────────────────────────────────────────────────────────
     print("\n" + "=" * 70)
     verdict = reporter.get_verdict()
-    print(f"  FORENSIC VERDICT: {verdict}")
+    risk_score = detector.get_risk_score(detection_results)
+    confidence = detector.get_confidence_level(detection_results)
+    print(f"  FORENSIC VERDICT  : {verdict}")
+    print(f"  RISK SCORE        : {risk_score} / 225")
+    print(f"  CONFIDENCE LEVEL  : {confidence.upper()}")
     print("=" * 70)
     print(f"  All output saved to: {args.output}")
     print("=" * 70 + "\n")

@@ -1,635 +1,1075 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GPS Spoof Detector — Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #080c10;
-  --surface: #0d1117;
-  --border: #1c2333;
-  --border-bright: #2a3548;
-  --text: #c9d1d9;
-  --muted: #586069;
-  --accent: #e36209;
-  --red: #f85149;
-  --red-glow: rgba(248,81,73,0.12);
-  --green: #3fb950;
-  --green-glow: rgba(63,185,80,0.1);
-  --blue: #388bfd;
-  --yellow: #d29922;
-  --mono: 'Share Tech Mono', monospace;
-  --sans: 'Syne', sans-serif;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPS Spoof Detector — Dashboard</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <style>
+    :root {
+      --bg: #0a0a0b;
+      --surface: #141416;
+      --surface-raised: #1a1a1e;
+      --border: rgba(255, 255, 255, 0.06);
+      --border-bright: rgba(255, 255, 255, 0.1);
+      --text: #ececef;
+      --text-secondary: #a0a0a8;
+      --muted: #6b6b76;
+      --accent: #6366f1;
+      --red: #ef4444;
+      --red-dim: rgba(239, 68, 68, 0.1);
+      --green: #22c55e;
+      --green-dim: rgba(34, 197, 94, 0.1);
+      --blue: #3b82f6;
+      --yellow: #eab308;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Inter', -apple-system, sans-serif;
+      --radius: 8px;
+    }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 13px;
-  line-height: 1.6;
-  min-height: 100vh;
-}
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
 
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-  pointer-events: none;
-  z-index: 9999;
-}
+    /* ─── Header ─── */
+    header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+    }
 
-/* ─── Header ─── */
-header {
-  padding: 22px 32px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: linear-gradient(180deg, rgba(248,81,73,0.04) 0%, transparent 100%);
-}
+    .logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
 
-.logo { font-size: 22px; width: 40px; height: 40px; border: 1.5px solid var(--red); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 14px var(--red-glow); flex-shrink: 0; }
-.header-text h1 { font-family: var(--sans); font-weight: 800; font-size: 17px; letter-spacing: 0.05em; color: #fff; text-transform: uppercase; }
-.header-text p { color: var(--muted); font-size: 11px; letter-spacing: 0.07em; margin-top: 1px; }
-.header-badge { margin-left: auto; background: var(--red-glow); border: 1px solid var(--red); border-radius: 6px; padding: 7px 14px; font-family: var(--sans); font-weight: 700; font-size: 11px; letter-spacing: 0.09em; color: var(--red); text-transform: uppercase; white-space: nowrap; }
-.header-badge.clear { background: var(--green-glow); border-color: var(--green); color: var(--green); }
+    .logo svg {
+      width: 16px;
+      height: 16px;
+      fill: #fff;
+    }
 
-/* ─── Upload screen ─── */
-#upload-screen {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 70px);
-  gap: 24px;
-  padding: 40px;
-}
+    .header-text h1 {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
+    }
 
-.upload-zone {
-  width: 100%;
-  max-width: 520px;
-  border: 2px dashed var(--border-bright);
-  border-radius: 14px;
-  padding: 56px 40px;
-  text-align: center;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  background: var(--surface);
-  position: relative;
-}
+    .header-text p {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 1px;
+    }
 
-.upload-zone.drag-over {
-  border-color: var(--blue);
-  background: rgba(56,139,253,0.05);
-}
+    .header-badge {
+      margin-left: auto;
+      border-radius: var(--radius);
+      padding: 6px 12px;
+      font-weight: 600;
+      font-size: 11px;
+      white-space: nowrap;
+      border: none;
+    }
 
-.upload-zone input[type=file] {
-  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-}
+    .header-badge {
+      background: var(--red-dim);
+      color: var(--red);
+    }
 
-.upload-icon { font-size: 42px; margin-bottom: 16px; display: block; }
+    .header-badge.clear {
+      background: var(--green-dim);
+      color: var(--green);
+    }
 
-.upload-title {
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 17px;
-  color: #fff;
-  margin-bottom: 8px;
-}
+    /* ─── Upload screen ─── */
+    #upload-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 70px);
+      gap: 24px;
+      padding: 40px;
+    }
 
-.upload-sub {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.7;
-}
+    .upload-zone {
+      width: 100%;
+      max-width: 480px;
+      border: 1.5px dashed rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 48px 36px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.15s;
+      background: var(--surface);
+      position: relative;
+    }
 
-.upload-sub code {
-  background: rgba(255,255,255,0.06);
-  border-radius: 3px;
-  padding: 1px 5px;
-  color: var(--blue);
-  font-family: var(--mono);
-}
+    .upload-zone:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
 
-.upload-error {
-  color: var(--red);
-  font-size: 12px;
-  margin-top: 12px;
-  display: none;
-}
+    .upload-zone.drag-over {
+      border-color: var(--accent);
+      background: rgba(99, 102, 241, 0.04);
+    }
 
-.how-to {
-  max-width: 520px;
-  width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 18px 22px;
-}
+    .upload-zone input[type=file] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
 
-.how-to h3 {
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 12px;
-}
+    .upload-icon {
+      margin-bottom: 14px;
+      display: block;
+    }
 
-.how-step {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  padding: 6px 0;
-  font-size: 12px;
-  color: var(--text);
-  border-bottom: 1px solid var(--border);
-}
+    .upload-icon svg {
+      width: 36px;
+      height: 36px;
+      stroke: var(--muted);
+      stroke-width: 1.5;
+      fill: none;
+    }
 
-.how-step:last-child { border-bottom: none; }
+    .upload-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
 
-.step-num {
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  background: rgba(56,139,253,0.12);
-  border: 1px solid rgba(56,139,253,0.3);
-  color: var(--blue);
-  font-size: 10px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
+    .upload-sub {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
 
-/* ─── Dashboard ─── */
-#dashboard { display: none; }
+    .upload-sub code {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 3px;
+      padding: 1px 5px;
+      color: var(--blue);
+      font-family: var(--mono);
+    }
 
-.dash-header {
-  padding: 16px 32px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 11px;
-  color: var(--muted);
-  background: rgba(13,17,23,0.6);
-}
+    .upload-error {
+      color: var(--red);
+      font-size: 12px;
+      margin-top: 12px;
+      display: none;
+    }
 
-.dash-header span { color: var(--text); }
-.dash-header .sep { color: var(--border-bright); }
+    .how-to {
+      max-width: 480px;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 22px;
+    }
 
-.btn-reset {
-  margin-left: auto;
-  background: none;
-  border: 1px solid var(--border-bright);
-  border-radius: 5px;
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 11px;
-  padding: 4px 12px;
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-}
+    .how-to h3 {
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
 
-.btn-reset:hover { border-color: var(--text); color: var(--text); }
+    .how-step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 6px 0;
+      font-size: 12px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+    }
 
-main {
-  padding: 24px 32px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 14px;
-  max-width: 1500px;
-}
+    .how-step:last-child {
+      border-bottom: none;
+    }
 
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 16px 18px;
-  transition: border-color 0.2s;
-}
+    .step-num {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
 
-.card:hover { border-color: var(--border-bright); }
+    /* ─── Dashboard ─── */
+    #dashboard {
+      display: none;
+    }
 
-.card-label {
-  font-size: 10px;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 12px;
-}
+    .dash-header {
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+    }
 
-/* KPI row */
-.kpi-row {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-}
+    .dash-header .dash-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
+    }
 
-.kpi {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 16px;
-  position: relative;
-  overflow: hidden;
-}
+    .dash-header .dash-meta {
+      font-size: 11px;
+      color: var(--muted);
+      margin-left: auto;
+    }
 
-.kpi::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 2px;
-}
+    .btn-reset {
+      background: none;
+      border: 1px solid var(--border-bright);
+      border-radius: 5px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
 
-.kpi.red::after   { background: var(--red);    box-shadow: 0 0 8px var(--red); }
-.kpi.green::after { background: var(--green);  box-shadow: 0 0 8px var(--green); }
-.kpi.orange::after{ background: var(--accent); box-shadow: 0 0 8px var(--accent); }
-.kpi.blue::after  { background: var(--blue);   box-shadow: 0 0 8px var(--blue); }
-.kpi.yellow::after{ background: var(--yellow); }
+    .btn-reset:hover {
+      border-color: var(--text);
+      color: var(--text);
+    }
 
-.kpi-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-.kpi-value { font-family: var(--sans); font-weight: 800; font-size: 26px; line-height: 1; }
-.kpi.red .kpi-value    { color: var(--red); }
-.kpi.green .kpi-value  { color: var(--green); }
-.kpi.orange .kpi-value { color: var(--accent); }
-.kpi.blue .kpi-value   { color: var(--blue); }
-.kpi.yellow .kpi-value { color: var(--yellow); }
-.kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    main {
+      padding: 24px 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      max-width: 1500px;
+    }
 
-/* Indicators */
-.checks-card { grid-column: 1 / 2; grid-row: 2 / 4; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+    }
 
-.check-item { display: flex; gap: 10px; align-items: flex-start; padding: 11px 0; border-bottom: 1px solid var(--border); }
-.check-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .card-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
 
-.check-dot { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; margin-top: 2px; }
-.check-dot.flagged { background: var(--red-glow); border: 1.5px solid var(--red); color: var(--red); }
-.check-dot.clear   { background: var(--green-glow); border: 1.5px solid var(--green); color: var(--green); }
+    /* KPI row */
+    .kpi-row {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
 
-.check-name { font-family: var(--sans); font-weight: 700; font-size: 12px; color: #fff; margin-bottom: 3px; }
-.check-name.flagged { color: var(--red); }
-.check-name.clear   { color: var(--green); }
-.check-detail { font-size: 11px; color: var(--muted); line-height: 1.5; }
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
 
-/* Timeline */
-.timeline-card { grid-column: 2 / -1; grid-row: 2 / 3; }
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
 
-.timeline { display: flex; flex-direction: column; padding-left: 16px; position: relative; }
-.timeline::before { content: ''; position: absolute; left: 5px; top: 6px; bottom: 6px; width: 1px; background: linear-gradient(180deg, var(--red), var(--accent), var(--green)); opacity: 0.35; }
+    .kpi-value {
+      font-weight: 700;
+      font-size: 24px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
 
-.tl-item { display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(28,35,51,0.5); position: relative; }
-.tl-item:last-child { border-bottom: none; }
-.tl-item::before { content: ''; position: absolute; left: -12px; top: 50%; transform: translateY(-50%); width: 6px; height: 6px; border-radius: 50%; background: var(--border-bright); border: 1px solid var(--muted); }
-.tl-item.suspicious::before { background: var(--red); border-color: var(--red); box-shadow: 0 0 5px var(--red); }
+    .kpi.red .kpi-value {
+      color: var(--red);
+    }
 
-.tl-time { font-size: 10px; color: var(--muted); white-space: nowrap; }
-.tl-event { display: flex; align-items: center; gap: 7px; }
+    .kpi.green .kpi-value {
+      color: var(--green);
+    }
 
-.tl-tag { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 5px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; }
-.tl-tag.suspicious { background: var(--red-glow); color: var(--red); border: 1px solid rgba(248,81,73,0.3); }
-.tl-tag.GPS_LOCATION { background: rgba(56,139,253,0.1); color: var(--blue); border: 1px solid rgba(56,139,253,0.2); }
-.tl-tag.CELL_TOWER_SCAN { background: rgba(210,153,34,0.1); color: var(--yellow); border: 1px solid rgba(210,153,34,0.2); }
-.tl-tag.MAPS_DESTINATION { background: rgba(63,185,80,0.1); color: var(--green); border: 1px solid rgba(63,185,80,0.2); }
-.tl-tag.MOCK_LOCATION_LOGCAT { background: var(--red-glow); color: var(--red); border: 1px solid rgba(248,81,73,0.3); }
-.tl-tag.DEVELOPER_OPTIONS_ENABLED { background: rgba(227,98,9,0.1); color: var(--accent); border: 1px solid rgba(227,98,9,0.2); }
-.tl-tag.SPOOFING_APP_INSTALLED { background: var(--red-glow); color: var(--red); border: 1px solid rgba(248,81,73,0.3); }
-.tl-tag.MOCK_LOCATION_SET { background: var(--red-glow); color: var(--red); border: 1px solid rgba(248,81,73,0.3); }
+    .kpi.orange .kpi-value {
+      color: var(--accent);
+    }
 
-.tl-desc { font-size: 11px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tl-item.suspicious .tl-desc { color: #fff; }
+    .kpi.blue .kpi-value {
+      color: var(--blue);
+    }
 
-/* Contradiction */
-.contra-card { grid-column: 2 / 3; grid-row: 3 / 4; }
+    .kpi.yellow .kpi-value {
+      color: var(--yellow);
+    }
 
-.location-block { background: rgba(13,17,23,0.8); border: 1px solid var(--border-bright); border-radius: 8px; padding: 11px 13px; }
-.location-block.gps-reported { border-color: rgba(56,139,253,0.4); background: rgba(56,139,253,0.04); }
-.location-block.cell-actual  { border-color: rgba(248,81,73,0.4);  background: rgba(248,81,73,0.04); }
-.loc-label { font-size: 9px; letter-spacing: 0.13em; text-transform: uppercase; margin-bottom: 4px; }
-.gps-reported .loc-label { color: var(--blue); }
-.cell-actual .loc-label  { color: var(--red); }
-.loc-name   { font-family: var(--sans); font-weight: 700; font-size: 14px; color: #fff; margin-bottom: 2px; }
-.loc-coords { font-size: 11px; color: var(--muted); }
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
 
-.sep-banner { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--red-glow); border: 1px solid rgba(248,81,73,0.3); border-radius: 6px; font-size: 11px; margin: 8px 0; }
-.sep-text   { color: var(--red); font-family: var(--sans); font-weight: 700; }
+    /* Indicators */
+    .checks-card {
+      grid-column: 1 / 2;
+      grid-row: 2 / 4;
+    }
 
-/* Evidence log */
-.evidence-card { grid-column: 3 / -1; grid-row: 3 / 4; }
+    .check-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
 
-.ev-item { background: rgba(13,17,23,0.6); border-left: 3px solid var(--red); border-radius: 0 6px 6px 0; padding: 8px 11px; margin-bottom: 7px; }
-.ev-item:last-child { margin-bottom: 0; }
-.ev-time { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
-.ev-text { font-size: 11px; color: var(--text); line-height: 1.5; }
-.ev-source { font-size: 10px; color: var(--accent); margin-top: 2px; }
+    .check-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
 
-/* Logcat */
-.logcat-card { grid-column: 1 / -1; }
-.logcat-body { background: #000; border-radius: 6px; border: 1px solid var(--border); padding: 12px 14px; margin-top: 8px; font-size: 11px; line-height: 1.9; overflow-x: auto; }
-.log-line { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
-.log-ts  { color: var(--muted); white-space: nowrap; }
-.log-pid { color: var(--yellow); white-space: nowrap; }
-.log-tag { color: var(--blue); white-space: nowrap; }
-.log-msg { color: var(--green); }
-.log-msg.alert { color: var(--red); }
-.log-empty { color: var(--muted); font-style: italic; }
+    .check-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
 
-/* Footer */
-.dash-footer {
-  padding: 12px 32px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.05em;
-}
+    .check-dot.flagged {
+      background: var(--red-dim);
+      color: var(--red);
+    }
 
-.verdict-footer { color: var(--red); font-family: var(--sans); font-weight: 700; }
-.verdict-footer.clear-verdict { color: var(--green); }
+    .check-dot.clear {
+      background: var(--green-dim);
+      color: var(--green);
+    }
 
-@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-.kpi, .card { animation: fadeUp 0.35s ease both; }
-</style>
+    .check-name {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .check-name.flagged {
+      color: var(--red);
+    }
+
+    .check-name.clear {
+      color: var(--green);
+    }
+
+    .check-detail {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Timeline */
+    .timeline-card {
+      grid-column: 2 / -1;
+      grid-row: 2 / 3;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 6px;
+      bottom: 6px;
+      width: 1px;
+      background: linear-gradient(180deg, var(--red), var(--accent), var(--green));
+      opacity: 0.35;
+    }
+
+    .tl-item {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(28, 35, 51, 0.5);
+      position: relative;
+    }
+
+    .tl-item:last-child {
+      border-bottom: none;
+    }
+
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-bright);
+      border: 1px solid var(--muted);
+    }
+
+    .tl-item.suspicious::before {
+      background: var(--red);
+      border-color: var(--red);
+      box-shadow: 0 0 5px var(--red);
+    }
+
+    .tl-time {
+      font-size: 10px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .tl-event {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .tl-tag {
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 3px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .tl-tag.suspicious {
+      background: var(--red-dim);
+      color: var(--red);
+    }
+
+    .tl-tag.GPS_LOCATION {
+      background: rgba(59, 130, 246, 0.08);
+      color: var(--blue);
+    }
+
+    .tl-tag.CELL_TOWER_SCAN {
+      background: rgba(234, 179, 8, 0.08);
+      color: var(--yellow);
+    }
+
+    .tl-tag.MAPS_DESTINATION {
+      background: var(--green-dim);
+      color: var(--green);
+    }
+
+    .tl-tag.MOCK_LOCATION_LOGCAT {
+      background: var(--red-dim);
+      color: var(--red);
+    }
+
+    .tl-tag.DEVELOPER_OPTIONS_ENABLED {
+      background: rgba(99, 102, 241, 0.08);
+      color: var(--accent);
+    }
+
+    .tl-tag.SPOOFING_APP_INSTALLED {
+      background: var(--red-dim);
+      color: var(--red);
+    }
+
+    .tl-tag.MOCK_LOCATION_SET {
+      background: var(--red-dim);
+      color: var(--red);
+    }
+
+    .tl-desc {
+      font-size: 11px;
+      color: var(--text-secondary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tl-item.suspicious .tl-desc {
+      color: var(--text);
+    }
+
+    /* Contradiction */
+    .contra-card {
+      grid-column: 2 / 3;
+      grid-row: 3 / 4;
+    }
+
+    .location-block {
+      background: var(--surface-raised);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+    }
+
+    .location-block.gps-reported {
+      border-left: 2px solid var(--blue);
+    }
+
+    .location-block.cell-actual {
+      border-left: 2px solid var(--red);
+    }
+
+    .loc-label {
+      font-size: 10px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .gps-reported .loc-label {
+      color: var(--blue);
+    }
+
+    .cell-actual .loc-label {
+      color: var(--red);
+    }
+
+    .loc-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .loc-coords {
+      font-size: 11px;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    .sep-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      background: var(--red-dim);
+      border-radius: var(--radius);
+      font-size: 11px;
+      margin: 8px 0;
+    }
+
+    .sep-text {
+      color: var(--red);
+      font-weight: 600;
+    }
+
+    /* Evidence log */
+    .evidence-card {
+      grid-column: 3 / -1;
+      grid-row: 3 / 4;
+    }
+
+    .ev-item {
+      background: var(--surface-raised);
+      border-left: 2px solid var(--red);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+    }
+
+    .ev-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .ev-time {
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 2px;
+      font-family: var(--mono);
+    }
+
+    .ev-text {
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .ev-source {
+      font-size: 10px;
+      color: var(--accent);
+      margin-top: 2px;
+    }
+
+    /* Logcat */
+    .logcat-card {
+      grid-column: 1 / -1;
+    }
+
+    .logcat-body {
+      background: var(--bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      margin-top: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+
+    .log-line {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .log-ts {
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .log-pid {
+      color: var(--yellow);
+      white-space: nowrap;
+    }
+
+    .log-tag {
+      color: var(--blue);
+      white-space: nowrap;
+    }
+
+    .log-msg {
+      color: var(--green);
+    }
+
+    .log-msg.alert {
+      color: var(--red);
+    }
+
+    .log-empty {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* Map */
+    .map-card {
+      grid-column: 1 / -1;
+    }
+
+    #leaflet-map {
+      height: 380px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-top: 8px;
+    }
+
+    .leaflet-popup-content-wrapper {
+      background: var(--surface) !important;
+      color: var(--text) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 8px !important;
+      font-family: var(--mono) !important;
+      font-size: 11px !important;
+    }
+
+    .leaflet-popup-tip {
+      background: var(--surface) !important;
+    }
+
+    /* Footer */
+    .dash-footer {
+      padding: 12px 28px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .verdict-footer {
+      color: var(--red);
+      font-weight: 600;
+    }
+
+    .verdict-footer.clear-verdict {
+      color: var(--green);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .kpi,
+    .card {
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .kpi:nth-child(2) {
+      animation-delay: 0.04s;
+    }
+
+    .kpi:nth-child(3) {
+      animation-delay: 0.08s;
+    }
+
+    .kpi:nth-child(4) {
+      animation-delay: 0.12s;
+    }
+
+    .kpi:nth-child(5) {
+      animation-delay: 0.16s;
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- Shared header -->
-<header>
-  <div class="logo">🛰</div>
-  <div class="header-text">
-    <h1>GPS Spoof Detector</h1>
-    <p>Forensic Dashboard &nbsp;·&nbsp; Android GPS Spoofing Analysis</p>
+  <!-- Shared header -->
+  <header>
+    <div class="logo"><svg viewBox="0 0 24 24">
+        <path
+          d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" />
+      </svg></div>
+    <div class="header-text">
+      <h1>GPS Spoof Detector</h1>
+      <p>Forensic analysis dashboard</p>
+    </div>
+    <div id="header-badge" class="header-badge" style="display:none"></div>
+  </header>
+
+  <!-- Upload screen -->
+  <div id="upload-screen">
+    <div class="upload-zone" id="drop-zone">
+      <input type="file" id="file-input" accept=".json,application/json">
+      <span class="upload-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg></span>
+      <div class="upload-title">Upload Forensic Report</div>
+      <div class="upload-sub">
+        Drop your <code>forensic_report.json</code> here, or click to browse.<br><br>
+        Generated by running: <code>python main.py --mode demo --output ./out</code>
+      </div>
+      <div class="upload-error" id="upload-error"></div>
+    </div>
+
+    <div class="how-to">
+      <h3>How to generate the JSON report</h3>
+      <div class="how-step">
+        <div class="step-num">1</div>
+        <div>Run the tool: <code
+            style="color:var(--blue);background:rgba(255,255,255,0.05);padding:1px 5px;border-radius:3px">python main.py --mode demo --output ./out</code>
+        </div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">2</div>
+        <div>Find <code
+            style="color:var(--blue);background:rgba(255,255,255,0.05);padding:1px 5px;border-radius:3px">forensic_report.json</code>
+          inside your output directory</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">3</div>
+        <div>Upload it here — dashboard renders instantly, nothing leaves your device</div>
+      </div>
+    </div>
   </div>
-  <div id="header-badge" class="header-badge" style="display:none"></div>
-</header>
 
-<!-- Upload screen -->
-<div id="upload-screen">
-  <div class="upload-zone" id="drop-zone">
-    <input type="file" id="file-input" accept=".json,application/json">
-    <span class="upload-icon">📂</span>
-    <div class="upload-title">Upload Forensic Report</div>
-    <div class="upload-sub">
-      Drop your <code>forensic_report.json</code> here, or click to browse.<br><br>
-      Generated by running: <code>python main.py --mode demo --output ./out</code>
+  <!-- Dashboard -->
+  <div id="dashboard">
+    <div class="dash-header">
+      <span id="meta-tool"></span>
+      <span class="sep">·</span>
+      <span id="meta-generated"></span>
+      <button class="btn-reset" id="btn-reset">↩ Upload new report</button>
     </div>
-    <div class="upload-error" id="upload-error"></div>
+
+    <main>
+      <!-- KPI row -->
+      <div class="kpi-row">
+        <div class="kpi red">
+          <div class="kpi-label">Risk Score</div>
+          <div class="kpi-value" id="kpi-risk">--</div>
+          <div class="kpi-sub" id="kpi-risk-sub">out of 225</div>
+        </div>
+        <div class="kpi orange">
+          <div class="kpi-label">Confidence</div>
+          <div class="kpi-value" id="kpi-confidence">--</div>
+          <div class="kpi-sub" id="kpi-confidence-sub"></div>
+        </div>
+        <div class="kpi blue">
+          <div class="kpi-label">Indicators Flagged</div>
+          <div class="kpi-value" id="kpi-indicators">--</div>
+          <div class="kpi-sub" id="kpi-indicators-sub"></div>
+        </div>
+        <div class="kpi yellow">
+          <div class="kpi-label">Suspicious Events</div>
+          <div class="kpi-value" id="kpi-suspicious">--</div>
+          <div class="kpi-sub">In forensic timeline</div>
+        </div>
+        <div class="kpi" id="kpi-travel">
+          <div class="kpi-label">Spoofing Apps</div>
+          <div class="kpi-value" id="kpi-apps">--</div>
+          <div class="kpi-sub" id="kpi-apps-sub"></div>
+        </div>
+      </div>
+
+      <!-- Indicators -->
+      <div class="card checks-card">
+        <div class="card-label">Detection Indicators</div>
+        <div id="indicators-list"></div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="card timeline-card">
+        <div class="card-label">Forensic Timeline</div>
+        <div class="timeline" id="timeline-list"></div>
+      </div>
+
+      <!-- Contradiction -->
+      <div class="card contra-card">
+        <div class="card-label">Location Contradiction Sample</div>
+        <div id="contradiction-body">
+          <div style="color:var(--muted);font-size:12px">No contradictions detected.</div>
+        </div>
+      </div>
+
+      <!-- Evidence log -->
+      <div class="card evidence-card">
+        <div class="card-label">Suspicious Events Detail</div>
+        <div id="evidence-list"></div>
+      </div>
+
+      <!-- Logcat -->
+      <div class="card logcat-card">
+        <div class="card-label">Logcat — Mock Location Events</div>
+        <div class="logcat-body" id="logcat-body"></div>
+      </div>
+
+      <!-- GPS Movement Map -->
+      <div class="card map-card">
+        <div class="card-label">GPS Movement Map</div>
+        <div id="leaflet-map"></div>
+      </div>
+    </main>
+
+    <div class="dash-footer">
+      <span id="footer-meta"></span>
+      <span class="verdict-footer" id="footer-verdict"></span>
+      <span>All processing is local — no data is sent anywhere</span>
+    </div>
   </div>
 
-  <div class="how-to">
-    <h3>How to generate the JSON report</h3>
-    <div class="how-step">
-      <div class="step-num">1</div>
-      <div>Run the tool: <code style="color:var(--blue);background:rgba(255,255,255,0.05);padding:1px 5px;border-radius:3px">python main.py --mode demo --output ./out</code></div>
-    </div>
-    <div class="how-step">
-      <div class="step-num">2</div>
-      <div>Find <code style="color:var(--blue);background:rgba(255,255,255,0.05);padding:1px 5px;border-radius:3px">forensic_report.json</code> inside your output directory</div>
-    </div>
-    <div class="how-step">
-      <div class="step-num">3</div>
-      <div>Upload it here — dashboard renders instantly, nothing leaves your device</div>
-    </div>
-  </div>
-</div>
+  <script>
+    // ── Upload handling ──────────────────────────────────────────────────────────
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const uploadErr = document.getElementById('upload-error');
 
-<!-- Dashboard -->
-<div id="dashboard">
-  <div class="dash-header">
-    <span id="meta-tool"></span>
-    <span class="sep">·</span>
-    <span id="meta-generated"></span>
-    <button class="btn-reset" id="btn-reset">↩ Upload new report</button>
-  </div>
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) loadFile(file);
+    });
 
-  <main>
-    <!-- KPI row -->
-    <div class="kpi-row">
-      <div class="kpi red">
-        <div class="kpi-label">Indicators Confirmed</div>
-        <div class="kpi-value" id="kpi-indicators">—</div>
-        <div class="kpi-sub" id="kpi-indicators-sub"></div>
-      </div>
-      <div class="kpi orange">
-        <div class="kpi-label">Suspicious Events</div>
-        <div class="kpi-value" id="kpi-suspicious">—</div>
-        <div class="kpi-sub">In forensic timeline</div>
-      </div>
-      <div class="kpi blue">
-        <div class="kpi-label">Cell Contradictions</div>
-        <div class="kpi-value" id="kpi-contradictions">—</div>
-        <div class="kpi-sub">GPS vs tower mismatches</div>
-      </div>
-      <div class="kpi yellow">
-        <div class="kpi-label">Spoofing Apps</div>
-        <div class="kpi-value" id="kpi-apps">—</div>
-        <div class="kpi-sub" id="kpi-apps-sub"></div>
-      </div>
-      <div class="kpi" id="kpi-travel">
-        <div class="kpi-label">Travel Speed Check</div>
-        <div class="kpi-value" id="kpi-travel-val">—</div>
-        <div class="kpi-sub" id="kpi-travel-sub"></div>
-      </div>
-    </div>
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) loadFile(fileInput.files[0]);
+    });
 
-    <!-- Indicators -->
-    <div class="card checks-card">
-      <div class="card-label">Detection Indicators</div>
-      <div id="indicators-list"></div>
-    </div>
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('upload-screen').style.display = 'flex';
+      document.getElementById('header-badge').style.display = 'none';
+      fileInput.value = '';
+    });
 
-    <!-- Timeline -->
-    <div class="card timeline-card">
-      <div class="card-label">Forensic Timeline</div>
-      <div class="timeline" id="timeline-list"></div>
-    </div>
-
-    <!-- Contradiction -->
-    <div class="card contra-card">
-      <div class="card-label">Location Contradiction Sample</div>
-      <div id="contradiction-body">
-        <div style="color:var(--muted);font-size:12px">No contradictions detected.</div>
-      </div>
-    </div>
-
-    <!-- Evidence log -->
-    <div class="card evidence-card">
-      <div class="card-label">Suspicious Events Detail</div>
-      <div id="evidence-list"></div>
-    </div>
-
-    <!-- Logcat -->
-    <div class="card logcat-card">
-      <div class="card-label">Logcat — Mock Location Events</div>
-      <div class="logcat-body" id="logcat-body"></div>
-    </div>
-  </main>
-
-  <div class="dash-footer">
-    <span id="footer-meta"></span>
-    <span class="verdict-footer" id="footer-verdict"></span>
-    <span>All processing is local — no data is sent anywhere</span>
-  </div>
-</div>
-
-<script>
-// ── Upload handling ──────────────────────────────────────────────────────────
-const dropZone   = document.getElementById('drop-zone');
-const fileInput  = document.getElementById('file-input');
-const uploadErr  = document.getElementById('upload-error');
-
-dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault();
-  dropZone.classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file) loadFile(file);
-});
-
-fileInput.addEventListener('change', () => {
-  if (fileInput.files[0]) loadFile(fileInput.files[0]);
-});
-
-document.getElementById('btn-reset').addEventListener('click', () => {
-  document.getElementById('dashboard').style.display = 'none';
-  document.getElementById('upload-screen').style.display = 'flex';
-  document.getElementById('header-badge').style.display = 'none';
-  fileInput.value = '';
-});
-
-function loadFile(file) {
-  uploadErr.style.display = 'none';
-  if (!file.name.endsWith('.json')) {
-    showError('Please upload a .json file (forensic_report.json).');
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (!data.summary || !data.indicators || !data.timeline) {
-        showError('Invalid report format. Make sure this is a forensic_report.json from GPS Spoof Detector.');
+    function loadFile(file) {
+      uploadErr.style.display = 'none';
+      if (!file.name.endsWith('.json')) {
+        showError('Please upload a .json file (forensic_report.json).');
         return;
       }
-      renderDashboard(data);
-    } catch {
-      showError('Could not parse JSON. Make sure the file is a valid forensic_report.json.');
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (!data.summary || !data.indicators || !data.timeline) {
+            showError('Invalid report format. Make sure this is a forensic_report.json from GPS Spoof Detector.');
+            return;
+          }
+          renderDashboard(data);
+        } catch {
+          showError('Could not parse JSON. Make sure the file is a valid forensic_report.json.');
+        }
+      };
+      reader.readAsText(file);
     }
-  };
-  reader.readAsText(file);
-}
 
-function showError(msg) {
-  uploadErr.textContent = '⚠ ' + msg;
-  uploadErr.style.display = 'block';
-}
-
-// ── Render ───────────────────────────────────────────────────────────────────
-function renderDashboard(d) {
-  const { meta, summary, indicators, timeline, spoofing_apps, cell_contradictions } = d;
-
-  // Header badge
-  const badge = document.getElementById('header-badge');
-  badge.style.display = 'block';
-  const flagged = summary.indicators_confirmed > 0;
-  badge.textContent = flagged ? '⚠ ' + summary.verdict.split('—')[0].trim() : '✓ No Spoofing Detected';
-  badge.className = 'header-badge' + (flagged ? '' : ' clear');
-
-  // Meta bar
-  document.getElementById('meta-tool').textContent = meta.tool;
-  document.getElementById('meta-generated').textContent = 'Generated ' + meta.generated_at;
-
-  // KPIs
-  const total = summary.total_indicators || 5;
-  document.getElementById('kpi-indicators').textContent = summary.indicators_confirmed + ' / ' + total;
-  document.getElementById('kpi-indicators-sub').textContent = summary.indicators_confirmed === 0 ? 'No indicators triggered' : 'Independent checks flagged';
-
-  document.getElementById('kpi-suspicious').textContent = summary.suspicious_event_count;
-
-  document.getElementById('kpi-contradictions').textContent = cell_contradictions.length;
-
-  document.getElementById('kpi-apps').textContent = spoofing_apps.length;
-  document.getElementById('kpi-apps-sub').textContent = spoofing_apps.length > 0
-    ? spoofing_apps.map(a => a.package.split('.').pop()).join(', ')
-    : 'No spoofing apps found';
-
-  // Travel speed KPI
-  const travelInd = indicators.find(i => i.name === 'Impossible Travel Speed');
-  const travelEl  = document.getElementById('kpi-travel');
-  const travelVal = document.getElementById('kpi-travel-val');
-  const travelSub = document.getElementById('kpi-travel-sub');
-  if (travelInd) {
-    if (travelInd.flagged) {
-      travelEl.className = 'kpi red';
-      travelEl.style.setProperty('--after-bg', 'var(--red)');
-      travelVal.textContent = 'FAIL';
-      travelVal.style.color = 'var(--red)';
-      travelSub.textContent = 'Impossible speed detected';
-    } else {
-      travelEl.className = 'kpi green';
-      travelVal.textContent = 'PASS';
-      travelVal.style.color = 'var(--green)';
-      travelSub.textContent = 'All transitions within threshold';
+    function showError(msg) {
+      uploadErr.textContent = msg;
+      uploadErr.style.display = 'block';
     }
-    // Fix bottom bar
-    travelEl.style.cssText += travelInd.flagged
-      ? '--kpi-bar: var(--red)' : '--kpi-bar: var(--green)';
-    travelEl.querySelector('.kpi-value').style.color = travelInd.flagged ? 'var(--red)' : 'var(--green)';
-  }
 
-  // Indicators list
-  const indList = document.getElementById('indicators-list');
-  indList.innerHTML = '';
-  indicators.forEach(ind => {
-    const dot = ind.flagged
-      ? `<div class="check-dot flagged">✕</div>`
-      : `<div class="check-dot clear">✓</div>`;
-    const nameClass = ind.flagged ? 'flagged' : 'clear';
-    // Brief evidence summary (first 2 lines)
-    const evSummary = ind.evidence.slice(0, 2).map(e => e.substring(0, 90) + (e.length > 90 ? '…' : '')).join('<br>');
-    indList.innerHTML += `
+    // ── Render ───────────────────────────────────────────────────────────────────
+    function renderDashboard(d) {
+      const { meta, summary, indicators, timeline, spoofing_apps, cell_contradictions } = d;
+
+      // Header badge
+      const badge = document.getElementById('header-badge');
+      badge.style.display = 'block';
+      const flagged = summary.indicators_confirmed > 0;
+      badge.textContent = flagged ? summary.verdict.split('—')[0].trim() : 'No Spoofing Detected';
+      badge.className = 'header-badge' + (flagged ? '' : ' clear');
+
+      // Meta bar
+      document.getElementById('meta-tool').textContent = meta.tool;
+      document.getElementById('meta-generated').textContent = 'Generated ' + meta.generated_at;
+
+      // Risk Score + Confidence
+      const riskScore = summary.risk_score || 0;
+      const maxScore = summary.max_score || 225;
+      const confidence = (summary.confidence || 'none').toUpperCase();
+      document.getElementById('kpi-risk').textContent = riskScore + ' / ' + maxScore;
+      const riskPct = Math.round(riskScore / maxScore * 100);
+      document.getElementById('kpi-risk-sub').textContent = riskPct + '% risk';
+
+      const confColors = { NONE: 'var(--green)', LOW: 'var(--blue)', MEDIUM: 'var(--yellow)', HIGH: 'var(--red)', CRITICAL: '#dc2626' };
+      const confEl = document.getElementById('kpi-confidence');
+      confEl.textContent = confidence;
+      confEl.style.color = confColors[confidence] || 'var(--muted)';
+      document.getElementById('kpi-confidence-sub').textContent = summary.indicators_confirmed + ' of ' + (summary.total_indicators || 11) + ' checks flagged';
+
+      // KPIs
+      const total = summary.total_indicators || 11;
+      document.getElementById('kpi-indicators').textContent = summary.indicators_confirmed + ' / ' + total;
+      document.getElementById('kpi-indicators-sub').textContent = summary.indicators_confirmed === 0 ? 'No indicators triggered' : 'Independent checks flagged';
+
+      document.getElementById('kpi-suspicious').textContent = summary.suspicious_event_count;
+
+      document.getElementById('kpi-apps').textContent = spoofing_apps.length;
+      document.getElementById('kpi-apps-sub').textContent = spoofing_apps.length > 0
+        ? spoofing_apps.map(a => a.package.split('.').pop()).join(', ')
+        : 'No spoofing apps found';
+
+
+      // Indicators list
+      const indList = document.getElementById('indicators-list');
+      indList.innerHTML = '';
+      indicators.forEach(ind => {
+        const dot = ind.flagged
+          ? `<div class="check-dot flagged">&times;</div>`
+          : ind.available === false
+          ? `<div class="check-dot" style="opacity:0.4">?</div>`
+          : `<div class="check-dot clear">&bull;</div>`;
+        const nameClass = ind.flagged ? 'flagged' : (ind.available === false ? '' : 'clear');
+        // Confidence badge
+        const confColor = {
+          'high': '#ef4444', 'medium': '#eab308', 'low': '#3b82f6', 'none': '#666', 'critical': '#dc2626'
+        }[ind.confidence || 'none'] || '#666';
+        const confBadge = ind.flagged
+          ? `<span style="display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:600;background:${confColor}20;color:${confColor};border:1px solid ${confColor}40;margin-left:6px">${(ind.confidence || 'none').toUpperCase()} (w:${ind.weight})</span>`
+          : (ind.available === false
+            ? `<span style="display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;color:#666;border:1px solid #333;margin-left:6px">N/A</span>`
+            : '');
+        // Brief evidence summary (first 2 lines)
+        const evSummary = ind.evidence.slice(0, 2).map(e => e.substring(0, 90) + (e.length > 90 ? '...' : '')).join('<br>');
+        indList.innerHTML += `
       <div class="check-item">
         ${dot}
         <div>
-          <div class="check-name ${nameClass}">${ind.name}</div>
+          <div class="check-name ${nameClass}">${ind.name}${confBadge}</div>
           <div class="check-detail">${ind.summary}${evSummary ? '<br><span style="opacity:0.7">' + evSummary + '</span>' : ''}</div>
         </div>
       </div>`;
-  });
+      });
 
-  // Timeline
-  const tlList = document.getElementById('timeline-list');
-  tlList.innerHTML = '';
-  timeline.forEach(ev => {
-    const suspicious = ev.suspicious;
-    const tag = suspicious
-      ? `<span class="tl-tag suspicious">⚠ ${formatEventType(ev.event_type)}</span>`
-      : `<span class="tl-tag ${ev.event_type}">${formatEventType(ev.event_type)}</span>`;
-    const timeStr = ev.ts_utc.replace(' UTC', '').split(' ')[1] + ' UTC';
-    const desc = ev.description.length > 72 ? ev.description.substring(0, 72) + '…' : ev.description;
-    tlList.innerHTML += `
+      // Timeline
+      const tlList = document.getElementById('timeline-list');
+      tlList.innerHTML = '';
+      timeline.forEach(ev => {
+        const suspicious = ev.suspicious;
+        const tag = suspicious
+          ? `<span class="tl-tag suspicious">${formatEventType(ev.event_type)}</span>`
+          : `<span class="tl-tag ${ev.event_type}">${formatEventType(ev.event_type)}</span>`;
+        const timeStr = ev.ts_utc.replace(' UTC', '').split(' ')[1] + ' UTC';
+        const desc = ev.description.length > 72 ? ev.description.substring(0, 72) + '…' : ev.description;
+        tlList.innerHTML += `
       <div class="tl-item ${suspicious ? 'suspicious' : ''}">
         <span class="tl-time">${timeStr}</span>
         <div class="tl-event">${tag}<span class="tl-desc">${esc(desc)}</span></div>
       </div>`;
-  });
+      });
 
-  // Cell contradiction
-  const contraBody = document.getElementById('contradiction-body');
-  if (cell_contradictions.length > 0) {
-    const c = cell_contradictions[0];
-    contraBody.innerHTML = `
+      // Cell contradiction
+      const contraBody = document.getElementById('contradiction-body');
+      if (cell_contradictions.length > 0) {
+        const c = cell_contradictions[0];
+        contraBody.innerHTML = `
       <div class="location-block gps-reported">
         <div class="loc-label">GPS Reported (Spoofed)</div>
-        <div class="loc-name">📍 ${c.gps_lat.toFixed(4)}°, ${c.gps_lng.toFixed(4)}°</div>
+        <div class="loc-name">${c.gps_lat.toFixed(4)}°, ${c.gps_lng.toFixed(4)}°</div>
         <div class="loc-coords">${c.gps_lat.toFixed(4)}° N, ${c.gps_lng.toFixed(4)}° E</div>
       </div>
       <div class="sep-banner" style="margin:8px 0">
@@ -639,82 +1079,169 @@ function renderDashboard(d) {
       </div>
       <div class="location-block cell-actual">
         <div class="loc-label">Cell Tower Actual Location</div>
-        <div class="loc-name">📡 ${c.cell_city}</div>
+        <div class="loc-name">${c.cell_city}</div>
         <div class="loc-coords">${c.cell_lat}° N, ${c.cell_lng}° E</div>
       </div>
       <div style="margin-top:8px;font-size:11px;color:var(--muted);line-height:1.6">
         ${cell_contradictions.length} total contradiction(s) detected. Cell towers cannot be spoofed by the device.
       </div>`;
-  } else {
-    contraBody.innerHTML = `<div style="color:var(--muted);font-size:12px">No GPS/cell tower contradictions detected.</div>`;
-  }
+      } else {
+        contraBody.innerHTML = `<div style="color:var(--muted);font-size:12px">No GPS/cell tower contradictions detected.</div>`;
+      }
 
-  // Evidence log — suspicious timeline events
-  const evList = document.getElementById('evidence-list');
-  evList.innerHTML = '';
-  const suspEvents = timeline.filter(e => e.suspicious);
-  if (suspEvents.length === 0) {
-    evList.innerHTML = '<div style="color:var(--muted);font-size:12px">No suspicious events found.</div>';
-  } else {
-    suspEvents.forEach(ev => {
-      evList.innerHTML += `
+      // Evidence log — suspicious timeline events
+      const evList = document.getElementById('evidence-list');
+      evList.innerHTML = '';
+      const suspEvents = timeline.filter(e => e.suspicious);
+      if (suspEvents.length === 0) {
+        evList.innerHTML = '<div style="color:var(--muted);font-size:12px">No suspicious events found.</div>';
+      } else {
+        suspEvents.forEach(ev => {
+          evList.innerHTML += `
         <div class="ev-item">
           <div class="ev-time">${ev.ts_utc}</div>
           <div class="ev-text">${esc(ev.description)}</div>
           <div class="ev-source">Source: ${ev.source} &nbsp;·&nbsp; ${formatEventType(ev.event_type)}</div>
         </div>`;
-    });
-  }
+        });
+      }
 
-  // Logcat — mock location events from timeline
-  const logcatBody = document.getElementById('logcat-body');
-  const logEvents = timeline.filter(e => e.event_type === 'MOCK_LOCATION_LOGCAT');
-  if (logEvents.length === 0) {
-    logcatBody.innerHTML = `<span class="log-empty">No mock location logcat events found.</span>`;
-  } else {
-    logcatBody.innerHTML = logEvents.map(ev => {
-      const desc = ev.description;
-      const isAlert = desc.toLowerCase().includes('mock provider enabled') || desc.toLowerCase().includes('settest');
-      // Try to parse logcat line format
-      const m = desc.match(/(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)\s+(\d+ \d+)\s+[A-Z]\s+(.+?):\s*(.*)/);
-      if (m) {
-        return `<div class="log-line">
+      // Logcat — mock location events from timeline
+      const logcatBody = document.getElementById('logcat-body');
+      const logEvents = timeline.filter(e => e.event_type === 'MOCK_LOCATION_LOGCAT');
+      if (logEvents.length === 0) {
+        logcatBody.innerHTML = `<span class="log-empty">No mock location logcat events found.</span>`;
+      } else {
+        logcatBody.innerHTML = logEvents.map(ev => {
+          const desc = ev.description;
+          const isAlert = desc.toLowerCase().includes('mock provider enabled') || desc.toLowerCase().includes('settest');
+          // Try to parse logcat line format
+          const m = desc.match(/(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)\s+(\d+ \d+)\s+[A-Z]\s+(.+?):\s*(.*)/);
+          if (m) {
+            return `<div class="log-line">
           <span class="log-ts">${m[1]}</span>
           <span class="log-pid">${m[2]}</span>
           <span class="log-tag">${m[3]}:</span>
           <span class="log-msg ${isAlert ? 'alert' : ''}">${esc(m[4])}</span>
         </div>`;
+          }
+          return `<div class="log-line"><span class="log-msg ${isAlert ? 'alert' : ''}">${esc(desc)}</span></div>`;
+        }).join('');
       }
-      return `<div class="log-line"><span class="log-msg ${isAlert ? 'alert' : ''}">${esc(desc)}</span></div>`;
-    }).join('');
-  }
 
-  // Footer
-  document.getElementById('footer-meta').textContent = meta.tool + ' · ' + meta.generated_at;
-  const footerV = document.getElementById('footer-verdict');
-  footerV.textContent = 'VERDICT: ' + summary.verdict;
-  footerV.className = 'verdict-footer' + (summary.indicators_confirmed === 0 ? ' clear-verdict' : '');
+      // Footer
+      document.getElementById('footer-meta').textContent = meta.tool + ' · ' + meta.generated_at;
+      const footerV = document.getElementById('footer-verdict');
+      footerV.textContent = 'VERDICT: ' + summary.verdict;
+      footerV.className = 'verdict-footer' + (summary.indicators_confirmed === 0 ? ' clear-verdict' : '');
 
-  // Switch screens
-  document.getElementById('upload-screen').style.display = 'none';
-  document.getElementById('dashboard').style.display = 'block';
-}
+      // Switch screens
+      document.getElementById('upload-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-function esc(str) {
-  return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
-}
+      // Render Leaflet map
+      renderMap(timeline, cell_contradictions);
+    }
 
-function formatEventType(t) {
-  const map = {
-    'GPS_LOCATION': 'GPS', 'CELL_TOWER_SCAN': 'Cell', 'MAPS_DESTINATION': 'Maps',
-    'MOCK_LOCATION_LOGCAT': 'Logcat', 'DEVELOPER_OPTIONS_ENABLED': 'Dev Mode',
-    'SPOOFING_APP_INSTALLED': 'App Install', 'MOCK_LOCATION_SET': 'Mock Set'
-  };
-  return map[t] || t;
-}
-</script>
+    // ── Helpers ──────────────────────────────────────────────────────────────────
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function formatEventType(t) {
+      const map = {
+        'GPS_LOCATION': 'GPS', 'CELL_TOWER_SCAN': 'Cell', 'MAPS_DESTINATION': 'Maps',
+        'MOCK_LOCATION_LOGCAT': 'Logcat', 'DEVELOPER_OPTIONS_ENABLED': 'Dev Mode',
+        'SPOOFING_APP_INSTALLED': 'App Install', 'MOCK_LOCATION_SET': 'Mock Set'
+      };
+      return map[t] || t;
+    }
+
+    // ── Leaflet Map Renderer ────────────────────────────────────────────────────
+    function renderMap(timeline, contradictions) {
+      const mapEl = document.getElementById('leaflet-map');
+      if (!mapEl) return;
+
+      const gpsPoints = timeline.filter(e => e.lat != null && e.lng != null);
+      if (gpsPoints.length === 0) {
+        mapEl.innerHTML = '<div style="color:var(--muted);padding:40px;text-align:center">No GPS coordinates available to render.</div>';
+        return;
+      }
+
+      const map = L.map('leaflet-map', {
+        zoomControl: true,
+        attributionControl: false
+      });
+
+      // Dark tile layer
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        attribution: '© CartoDB © OSM'
+      }).addTo(map);
+
+      const genuineCoords = [];
+      const suspiciousCoords = [];
+
+      gpsPoints.forEach(pt => {
+        const latlng = [pt.lat, pt.lng];
+        const color = pt.suspicious ? '#ef4444' : '#22c55e';
+        const label = pt.suspicious ? 'Suspicious' : 'Genuine';
+        const time = pt.ts_utc ? pt.ts_utc.replace(' UTC', '') : '';
+
+        L.circleMarker(latlng, {
+          radius: pt.suspicious ? 7 : 5,
+          fillColor: color,
+          color: color,
+          weight: 1,
+          opacity: 0.9,
+          fillOpacity: 0.7
+        }).bindPopup(
+          `<b>${label}</b><br>` +
+          `${pt.lat.toFixed(4)}°, ${pt.lng.toFixed(4)}°<br>` +
+          `${time}<br>` +
+          `<span style="opacity:0.7">${esc(pt.description || '').substring(0, 80)}</span>`
+        ).addTo(map);
+
+        if (pt.suspicious) suspiciousCoords.push(latlng);
+        else genuineCoords.push(latlng);
+      });
+
+      // Draw path lines
+      if (genuineCoords.length > 1) {
+        L.polyline(genuineCoords, { color: '#22c55e', weight: 2, opacity: 0.5, dashArray: '6,6' }).addTo(map);
+      }
+      if (suspiciousCoords.length > 1) {
+        L.polyline(suspiciousCoords, { color: '#ef4444', weight: 2, opacity: 0.5, dashArray: '6,6' }).addTo(map);
+      }
+
+      // Draw contradiction lines (GPS ↔ Cell Tower)
+      contradictions.forEach(c => {
+        L.polyline(
+          [[c.gps_lat, c.gps_lng], [c.cell_lat, c.cell_lng]],
+          { color: '#eab308', weight: 1.5, opacity: 0.6, dashArray: '4,8' }
+        ).addTo(map);
+
+        L.circleMarker([c.cell_lat, c.cell_lng], {
+          radius: 7, fillColor: '#eab308', color: '#eab308',
+          weight: 1, opacity: 0.8, fillOpacity: 0.4
+        }).bindPopup(
+          `<b>Cell Tower</b><br>${c.cell_city}<br>` +
+          `CID: ${c.cid}<br>Separation: ${c.separation_km} km`
+        ).addTo(map);
+      });
+
+      // Fit bounds to all points
+      const allCoords = gpsPoints.map(p => [p.lat, p.lng]);
+      if (contradictions.length > 0) {
+        contradictions.forEach(c => {
+          allCoords.push([c.cell_lat, c.cell_lng]);
+        });
+      }
+      map.fitBounds(allCoords, { padding: [30, 30] });
+    }
+  </script>
 </body>
+
 </html>

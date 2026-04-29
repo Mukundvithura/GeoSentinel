@@ -1,0 +1,22 @@
+[
+  {
+    "ts_ms": 1710475190000,
+    "activity": "STILL"
+  },
+  {
+    "ts_ms": 1710475220000,
+    "activity": "STILL"
+  },
+  {
+    "ts_ms": 1710475250000,
+    "activity": "TILTING"
+  },
+  {
+    "ts_ms": 1710475280000,
+    "activity": "STILL"
+  },
+  {
+    "ts_ms": 1710475310000,
+    "activity": "STILL"
+  }
+]
