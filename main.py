@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 =============================================================================
-LocaShield -- Multi-Layer Forensic Correlation Engine
+GeoSentinel -- Multi-Layer Forensic Correlation Engine
 Project: Forensic Detection and Timeline Reconstruction of GPS Spoofing
          on Android Devices
 Author : Cybersecurity / Digital Forensics Academic Project
@@ -42,9 +42,9 @@ from report       import ReportGenerator
 def build_arg_parser() -> argparse.ArgumentParser:
     """Define and return the command-line argument parser."""
     parser = argparse.ArgumentParser(
-        prog="locashield",
+        prog="geosentinel",
         description=(
-            "LocaShield -- "
+            "GeoSentinel -- "
             "Detects and reconstructs GPS spoofing artefacts on Android devices."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -119,7 +119,7 @@ def main():
 
     # ── Banner ────────────────────────────────────────────────────────────────
     print("=" * 70)
-    print("  LOCASHIELD  v2.0.0")
+    print("  GEOSENTINEL  v2.0.0")
     print("  Multi-Layer Forensic Correlation Engine")
     print("=" * 70)
     print(f"  Mode         : {args.mode.upper()}")

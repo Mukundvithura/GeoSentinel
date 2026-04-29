@@ -242,7 +242,7 @@ class ADBClient:
         """Write all SHA-256 hashes to a hash manifest file."""
         log_path = os.path.join(self.output_dir, "CHAIN_OF_CUSTODY_HASHES.txt")
         with open(log_path, "w") as f:
-            f.write("LOCASHIELD -- CHAIN OF CUSTODY HASH LOG\n")
+            f.write("GEOSENTINEL -- CHAIN OF CUSTODY HASH LOG\n")
             f.write(f"Generated: {datetime.datetime.utcnow().isoformat()} UTC\n")
             f.write("=" * 70 + "\n")
             for filepath, sha256 in self.hash_log.items():

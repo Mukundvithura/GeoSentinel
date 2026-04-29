@@ -1,7 +1,7 @@
 {
   "meta": {
-    "tool": "LocaShield v2.0.0",
-    "generated_at": "2026-04-29 09:31:24 UTC",
+    "tool": "GeoSentinel v2.0.0",
+    "generated_at": "2026-04-29 11:02:24 UTC",
     "output_dir": "./out"
   },
   "summary": {
@@ -54,7 +54,7 @@
       "weight": 25,
       "confidence": "high",
       "available": true,
-      "summary": "FLAGGED \u2014 30 GPS/cell tower geographic contradictions detected. Device GPS reports locations inconsistent with simultaneously active cell towers.",
+      "summary": "FLAGGED \u2014 35 GPS/cell tower geographic contradictions detected. Device GPS reports locations inconsistent with simultaneously active cell towers.",
       "evidence": [
         "CONTRADICTION at 2024-03-15 04:00:00 UTC: GPS reports (12.9716,77.5946)  |  Cell tower CID=28741 resolves to 'Chennai' (13.0827,80.2707)  |  Separation: 290.2 km  |  Time gap between records: 0.0 s",
         "CONTRADICTION at 2024-03-15 04:00:00 UTC: GPS reports (12.9716,77.5946)  |  Cell tower CID=28741 resolves to 'Chennai' (13.0827,80.2707)  |  Separation: 290.2 km  |  Time gap between records: 0.0 s",
@@ -62,6 +62,8 @@
         "CONTRADICTION at 2024-03-15 04:00:00 UTC: GPS reports (12.9716,77.5946)  |  Cell tower CID=28741 resolves to 'Chennai' (13.0827,80.2707)  |  Separation: 290.2 km  |  Time gap between records: 0.0 s",
         "CONTRADICTION at 2024-03-15 04:00:00 UTC: GPS reports (12.9716,77.5946)  |  Cell tower CID=28741 resolves to 'Chennai' (13.0827,80.2707)  |  Separation: 290.2 km  |  Time gap between records: 0.0 s",
         "CONTRADICTION at 2024-03-15 04:00:00 UTC: GPS reports (12.9716,77.5946)  |  Cell tower CID=28741 resolves to 'Chennai' (13.0827,80.2707)  |  Separation: 290.2 km  |  Time gap between records: 0.0 s",
+        "CONTRADICTION at 2024-03-15 04:00:00 UTC: GPS reports (12.9716,77.5946)  |  Cell tower CID=28741 resolves to 'Chennai' (13.0827,80.2707)  |  Separation: 290.2 km  |  Time gap between records: 0.0 s",
+        "CONTRADICTION at 2024-03-15 04:00:30 UTC: GPS reports (12.9720,77.5950)  |  Cell tower CID=28741 resolves to 'Chennai' (13.0827,80.2707)  |  Separation: 290.1 km  |  Time gap between records: 30.0 s",
         "CONTRADICTION at 2024-03-15 04:00:30 UTC: GPS reports (12.9720,77.5950)  |  Cell tower CID=28741 resolves to 'Chennai' (13.0827,80.2707)  |  Separation: 290.1 km  |  Time gap between records: 30.0 s",
         "CONTRADICTION at 2024-03-15 04:00:30 UTC: GPS reports (12.9720,77.5950)  |  Cell tower CID=28741 resolves to 'Chennai' (13.0827,80.2707)  |  Separation: 290.1 km  |  Time gap between records: 30.0 s",
         "CONTRADICTION at 2024-03-15 04:00:30 UTC: GPS reports (12.9720,77.5950)  |  Cell tower CID=28741 resolves to 'Chennai' (13.0827,80.2707)  |  Separation: 290.1 km  |  Time gap between records: 30.0 s",
@@ -74,12 +76,15 @@
         "CONTRADICTION at 2024-03-15 04:01:00 UTC: GPS reports (12.9718,77.5948)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 0.0 s",
         "CONTRADICTION at 2024-03-15 04:01:00 UTC: GPS reports (12.9718,77.5948)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 0.0 s",
         "CONTRADICTION at 2024-03-15 04:01:00 UTC: GPS reports (12.9718,77.5948)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 0.0 s",
+        "CONTRADICTION at 2024-03-15 04:01:00 UTC: GPS reports (12.9718,77.5948)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 0.0 s",
         "CONTRADICTION at 2024-03-15 04:01:30 UTC: GPS reports (12.9715,77.5944)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 30.0 s",
         "CONTRADICTION at 2024-03-15 04:01:30 UTC: GPS reports (12.9715,77.5944)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 30.0 s",
         "CONTRADICTION at 2024-03-15 04:01:30 UTC: GPS reports (12.9715,77.5944)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 30.0 s",
         "CONTRADICTION at 2024-03-15 04:01:30 UTC: GPS reports (12.9715,77.5944)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 30.0 s",
         "CONTRADICTION at 2024-03-15 04:01:30 UTC: GPS reports (12.9715,77.5944)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 30.0 s",
         "CONTRADICTION at 2024-03-15 04:01:30 UTC: GPS reports (12.9715,77.5944)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 30.0 s",
+        "CONTRADICTION at 2024-03-15 04:01:30 UTC: GPS reports (12.9715,77.5944)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 30.0 s",
+        "CONTRADICTION at 2024-03-15 04:02:00 UTC: GPS reports (12.9722,77.5952)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 60.0 s",
         "CONTRADICTION at 2024-03-15 04:02:00 UTC: GPS reports (12.9722,77.5952)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 60.0 s",
         "CONTRADICTION at 2024-03-15 04:02:00 UTC: GPS reports (12.9722,77.5952)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 60.0 s",
         "CONTRADICTION at 2024-03-15 04:02:00 UTC: GPS reports (12.9722,77.5952)  |  Cell tower CID=28743 resolves to 'Chennai' (13.0750,80.2650)  |  Separation: 289.5 km  |  Time gap between records: 60.0 s",
@@ -109,7 +114,7 @@
       "available": true,
       "summary": "No anti-forensic signals detected in location data.",
       "evidence": [
-        "60 duplicate record(s) found.",
+        "72 duplicate record(s) found.",
         "  -> Duplicate GPS record at index 1: (13.0820, 80.2700) ts=1710473400000",
         "  -> Duplicate GPS record at index 2: (13.0820, 80.2700) ts=1710473400000"
       ]

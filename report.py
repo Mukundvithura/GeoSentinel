@@ -111,11 +111,11 @@ class ReportGenerator:
         # -- Report Header ---------------------------------------------------
         sprint("")
         sep("=")
-        sprint(" " * 10 + "LOCASHIELD FORENSIC EXAMINATION REPORT")
+        sprint(" " * 10 + "GEOSENTINEL FORENSIC EXAMINATION REPORT")
         sprint(" " * 10 + "Multi-Layer Forensic Correlation Engine")
         sep("=")
         sprint(f"  Report Generated : {self._generated}")
-        sprint(f"  Tool Version     : LocaShield v2.0.0")
+        sprint(f"  Tool Version     : GeoSentinel v2.0.0")
         sprint(f"  Evidence Root    : {self.output_dir}")
         sprint(f"  Risk Score       : {self._risk_score}/225")
         sprint(f"  Confidence Level : {self._confidence.upper()}")
@@ -266,7 +266,7 @@ class ReportGenerator:
     def generate_json_report(self) -> str:
         """
         Write a structured JSON report suitable for upload to the
-        LocaShield web dashboard.
+        GeoSentinel web dashboard.
 
         Returns the path to the written JSON file.
         """
@@ -345,7 +345,7 @@ class ReportGenerator:
 
         report = {
             "meta": {
-                "tool":         "LocaShield v2.0.0",
+                "tool":         "GeoSentinel v2.0.0",
                 "generated_at": self._generated,
                 "output_dir":   self.output_dir,
             },
@@ -435,12 +435,12 @@ class ReportGenerator:
 
             # ── Cover ────────────────────────────────────────────────────
             w("=" * 70)
-            w("  LOCASHIELD FORENSIC EXAMINATION REPORT")
+            w("  GEOSENTINEL FORENSIC EXAMINATION REPORT")
             w("  Forensic Detection and Timeline Reconstruction")
             w("  of GPS Spoofing on Android Devices")
             w("=" * 70)
             w(f"  Report Date     : {self._generated}")
-            w(f"  Tool            : LocaShield v2.0.0")
+            w(f"  Tool            : GeoSentinel v2.0.0")
             w(f"  Output Directory: {self.output_dir}")
             w("=" * 70)
             w()
@@ -549,7 +549,7 @@ class ReportGenerator:
         with open(manifest_path, "w", encoding="utf-8") as f:
             f.write("=" * 70 + "\n")
             f.write("  EVIDENCE INTEGRITY MANIFEST\n")
-            f.write("  LocaShield v2.0.0\n")
+            f.write("  GeoSentinel v2.0.0\n")
             f.write("=" * 70 + "\n")
             f.write(f"  Generated    : {self._generated}\n")
             f.write(f"  Output Dir   : {self.output_dir}\n")

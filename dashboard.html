@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GPS Spoof Detector — Dashboard</title>
+  <title>GeoSentinel — Dashboard</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet">
@@ -791,7 +791,7 @@
           d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" />
       </svg></div>
     <div class="header-text">
-      <h1>GPS Spoof Detector</h1>
+      <h1>GeoSentinel</h1>
       <p>Forensic analysis dashboard</p>
     </div>
     <div id="header-badge" class="header-badge" style="display:none"></div>
@@ -956,7 +956,7 @@
         try {
           const data = JSON.parse(e.target.result);
           if (!data.summary || !data.indicators || !data.timeline) {
-            showError('Invalid report format. Make sure this is a forensic_report.json from GPS Spoof Detector.');
+            showError('Invalid report format. Make sure this is a forensic_report.json from GeoSentinel.');
             return;
           }
           renderDashboard(data);
@@ -1172,13 +1172,16 @@
 
       const map = L.map('leaflet-map', {
         zoomControl: true,
-        attributionControl: false
+        attributionControl: false,
+        maxBounds: [[-90, -180], [90, 180]],
+        maxBoundsViscosity: 1.0
       });
 
       // Dark tile layer
       L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
-        attribution: '© CartoDB © OSM'
+        attribution: '© CartoDB © OSM',
+        noWrap: true
       }).addTo(map);
 
       const genuineCoords = [];

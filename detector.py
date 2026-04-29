@@ -154,7 +154,7 @@ class CellResolver:
                 f"key={self.api_key}&mcc={mcc}&mnc={mnc}&lac={lac}&cellid={cid}"
                 f"&format=json"
             )
-            req = urllib.request.Request(url, headers={"User-Agent": "LocaShield/2.0"})
+            req = urllib.request.Request(url, headers={"User-Agent": "GeoSentinel/2.0"})
             with urllib.request.urlopen(req, timeout=5) as resp:
                 data = json.loads(resp.read().decode())
                 if data.get("lat") and data.get("lon"):

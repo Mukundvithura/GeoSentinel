@@ -116,11 +116,11 @@ python main.py --mode offline --dump-path ./dump --output ./evidence
 
 ```
 ======================================================================
-  LOCASHIELD FORENSIC EXAMINATION REPORT
+  GEOSENTINEL FORENSIC EXAMINATION REPORT
   Multi-Layer Forensic Correlation Engine
 ======================================================================
   Report Date     : 2026-04-29 09:31:24 UTC
-  Tool Version     : LocaShield v2.0.0
+  Tool Version     : GeoSentinel v2.0.0
   Evidence Root    : ./out
   Risk Score       : 185/225
   Confidence Level : CRITICAL
