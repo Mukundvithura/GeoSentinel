@@ -183,44 +183,6 @@ GeoSentinel/
 ```
 
 ---
-
-## Extending GeoSentinel
-
-The plugin architecture makes it trivial to add detection modules. Create `checks/my_check.py`:
-
-```python
-from checks.base_check import BaseCheck
-
-class MyCustomCheck(BaseCheck):
-    NAME   = "Custom Check Name"
-    WEIGHT = 20
-
-    def run(self) -> dict:
-        evidence = []
-        flagged  = False
-
-        data = self.data.get('my_data_source', [])
-
-        if some_condition:
-            flagged = True
-            evidence.append("Description of finding")
-
-        return self._result(flagged, "Summary", evidence, 'high')
-```
-
-Register it in `checks/__init__.py`:
-
-```python
-from checks.my_check import MyCustomCheck
-
-ALL_CHECKS = [
-    # ... existing checks ...
-    MyCustomCheck,
-]
-```
-
----
-
 ## Research Extensions
 
 GeoSentinel is designed as a foundation for further academic and applied research into:
